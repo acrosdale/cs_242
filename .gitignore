@@ -1,0 +1,11 @@
+run/
+resource/logs/
+resource/storage/
+.idea/
+*.pyc
+*.pyo
+*.egg-info
+.DS_Store
+.sqlite
+.coverage
+*.pytest_cache

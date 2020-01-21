@@ -1,0 +1,19 @@
+# when production ready lock in package versions
+######################
+# django requirements#
+######################
+Django
+djangorestframework
+uWSGI
+celery
+python-dotenv
+pytz
+psycopg2
+kombu
+tweepy
+lupyne
+######################
+# pytest requirements#
+######################
+pytest-django
+pytest-cov

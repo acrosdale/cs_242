@@ -1,0 +1,81 @@
+version: "3.7"
+
+services:
+  ############################
+  # Built from remote images #
+  ############################
+  db:
+    container_name: postgres_db
+    image: postgres:11.4
+
+    # Expose the port db_nw
+    expose:
+      - 5432
+
+    volumes:
+      - ./run:/var/lib/postgresql/data/pgdata
+    # Set some environment variables to be used in the application
+    env_file:
+      - dev.env
+
+    networks:
+      - db_nw
+
+  # Database gui
+  adminer:
+    image: adminer
+    ports:
+      - 8090:8080
+    networks:
+      - db_nw
+
+
+  ###############################
+  # Built from local Dockerfile #
+  ###############################\
+
+  nginx:
+    build: resources/nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+    volumes:
+      - ./resources/nginx:/etc/nginx/conf.d
+    networks:
+      - web_nw
+
+  web:
+    container_name: django_twitter
+    # Build the Dockerfile in this directory
+    build:
+      context: .
+      args:
+        - LOCATION=/home
+        - USER=django
+        - PROJECT_DIR=sites/twitter
+        - SCRIPT=dev_entry.sh
+
+    # Mount this directory as a volume at /opt/sites/django_pollerize
+    volumes:
+      - .:/home/django/sites/twitter
+
+    expose:
+      - 8000
+
+    depends_on:
+      - db
+
+    # Set some environment variables to be used in the application
+    env_file:
+      - dev.env
+
+    networks:
+      - db_nw
+      - web_nw
+
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge

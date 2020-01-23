@@ -12,19 +12,12 @@ dev-build:
 	docker-compose build
 
 dev-up:
-	docker-compose up
+	docker-compose up --build
 
-dev-destroy:
+dev-down:
 	docker-compose down
 
-##########################
-## Compose Test Commands #
-##########################
-
-#run test
-test-run-web:
-	docker-compose run web SCRIPT=dev_test.sh
-
-# start test build and run test suite
-test: test-run-web
+# this destroys everything
+dev-destroy:
+	docker-compose down -v --rmi all --remove-orphans
 

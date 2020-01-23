@@ -23,8 +23,7 @@ PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 RESOURCES_DIR = os.path.join(ROOT_DIR, 'resources')
 RUNTIME_DIR = os.path.join(ROOT_DIR, 'run')
 DJANGO_DIR = os.path.join(ROOT_DIR, 'src/app')
-TEST_DIR = os.path.join(ROOT_DIR, 'tests')
-# DOTENV_PATH = os.path.join(ROOT_DIR, "dev.env")
+DOTENV_PATH = os.path.join(ROOT_DIR, "dev.env")
 
 
 STATIC_DIR = os.path.join(RUNTIME_DIR, 'static')
@@ -34,14 +33,13 @@ LOGGING_DIR = os.path.join(RESOURCES_DIR, 'logs')
 
 # testing suite.
 os.sys.path.append(DJANGO_DIR)
-os.sys.path.append(TEST_DIR)
 
-# if not os.path.exists(DOTENV_PATH):
-#     raise ImproperlyConfigured(
-#         "DOTENV_PATH (%s) does not exist, but is required for setting up environment" % DOTENV_PATH
-#     )
-# else:
-#     load_dotenv(DOTENV_PATH, verbose=True)
+if not os.path.exists(DOTENV_PATH):
+    raise ImproperlyConfigured(
+        "DOTENV_PATH (%s) does not exist, but is required for setting up environment" % DOTENV_PATH
+    )
+else:
+    load_dotenv(DOTENV_PATH, verbose=True)
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -73,7 +71,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # apps
-    'twit.apps.TwitConfig'
+    'twit.apps.TwitConfig',
+	'api.apps.ApiConfig'
 
 ]
 
@@ -83,6 +82,25 @@ INSTALLED_APPS = [
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ]
+#     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated', 'api.permissions.IsAjaxPermission'),
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.SessionAuthentication',
+#         'api.authentication.CustomTokenAuthentication',
+#         # 'rest_framework.authentication.TokenAuthentication',
+#     ),
+#     'DEFAULT_THROTTLE_CLASSES': (
+#         'rest_framework.throttling.UserRateThrottle',
+#     ),
+#     'DEFAULT_THROTTLE_RATES': {
+#         'user': '750/minute',
+#     },
+#     # 'PAGINATE_BY': 10,
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 10,
+#     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+#     'UNICODE_JSON': False
+
+
 # }
 
 MIDDLEWARE = [
@@ -170,3 +188,5 @@ STATIC_ROOT = STATIC_DIR
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "media")
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = ''
+CONSUMER_KEY = 'Omm9dSSdTOFA0FUmOYSPAvMTe'
+CONSUMER_SECRET = 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt'

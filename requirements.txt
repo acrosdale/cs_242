@@ -5,15 +5,9 @@
 Django
 djangorestframework
 uWSGI
-celery
 python-dotenv
 pytz
 psycopg2
 kombu
 tweepy
 lupyne
-######################
-# pytest requirements#
-######################
-pytest-django
-pytest-cov

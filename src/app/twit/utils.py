@@ -1,5 +1,22 @@
 import tweepy
 from django.conf import settings
+from pymongo import MongoClient
+
+
+def GetMongo_client(collection_name='django'):
+	a = 'mongodb://root:pleaseUseAStr0ngPassword@mongod:27017/admin'
+	client = MongoClient(a)
+	db = client['%s' % collection_name]
+
+
+	# >> > db.twit_tweet
+	# Collection(
+	# 	Database(MongoClient(host=['mongod:27017'], document_class=dict, tz_aware=False, connect=True), 'django'),
+	# 	'twit_tweet')
+	# >> > db.list_collection_names()
+	# ['__schema__', 'twit_tweet', 'django_migrations']
+
+	return db
 
 
 class TwitStreamListener(tweepy.StreamListener):
@@ -25,7 +42,7 @@ class TwitStreamer(object):
 		# init twit stream
 		self.Stream = tweepy.Stream(auth=api.auth, listener=TwitStreamListener())
 
-	def daemon_runner(self):
+	def start(self):
 		# exit on status_code in [420, 429] or ctrl C
 		pass
 
@@ -36,6 +53,7 @@ class TwitSearch(object):
 		# init tweepy auth
 		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
 		self.api = tweepy.API(auth)
+		self.keywords = keyswords
 
-	def search(self, keyswords):
+	def start(self):
 		pass

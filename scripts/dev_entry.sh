@@ -2,7 +2,7 @@
 echo "Dev startup script starting.....";
 cd src/app
 python manage.py makemigrations
-python manage.py migrate
+python manage.py migrate twit
 python manage.py collectstatic --noinput
 
 echo "****Django is ready.****";

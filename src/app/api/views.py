@@ -1,14 +1,45 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from twit.models import Tweet, TwitUser
+from .serializers import TweetSerializer
+
 
 # Create your views here.
 class TestApi(APIView):
 
 	def get(self, request):
+		#
+		sample = {
+			'date_created': 'Wed Oct 10 20:19:24 +0000 2018',
+			'text': 'blah',
+			'coordinates': [-125.3156, 126.4538],
+			'hashtags': ['ucr', 'Riverside'],
+			'user': TwitUser(**{
+				"user_id": 1,
+				"name": 'group 20',
+				"screen_name": '20-gang',
+				"location": 'Riverside',
+				"description": ' this is for a group project sample',
+				"verified": True,
+				"followers_count": 5,
+				"friends_count": 100
+			})
+		}
 
-		response = Response(data={'msg': 'apis operational'})
+		if Tweet.objects.exists():
+			pass
+		else:
+			Tweet(**sample).save()
 
-		return  response
+		# twit = Tweet.objects.get(id=1)
+		#
+		# # if twit.count() > 1:
+		# # 	serial = TweetSerializer(twit, many=True)
+		# # else:
+		# # 	serial = TweetSerializer(twit)
+		#
+		# serial = TweetSerializer(twit)
 
-	# def get_queryset(self):
-	# 	pass
+		response = Response(data={'goto for mongodb': "http://localhost:8081/db/django/twit_tweet"})
+
+		return response

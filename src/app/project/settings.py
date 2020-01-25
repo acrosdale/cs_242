@@ -22,7 +22,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.pa
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 RESOURCES_DIR = os.path.join(ROOT_DIR, 'resources')
 RUNTIME_DIR = os.path.join(ROOT_DIR, 'run')
-DJANGO_DIR = os.path.join(ROOT_DIR, 'src/app')
+DJANGO_DIR = os.path.join(ROOT_DIR, 'src')
 DOTENV_PATH = os.path.join(ROOT_DIR, "dev.env")
 
 
@@ -72,7 +72,7 @@ INSTALLED_APPS = [
 
     # apps
     'twit.apps.TwitConfig',
-	'api.apps.ApiConfig'
+    'api.apps.ApiConfig'
 
 ]
 
@@ -137,15 +137,29 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', ''),
+#         'USER': os.getenv('POSTGRES_USER', ''),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+#         'HOST': os.getenv('POSTGRES_HOST', ''),
+#         'PORT': os.getenv('POSTGRES_PORT', 5432)
+#
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', ''),
-        'USER': os.getenv('POSTGRES_USER', ''),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('POSTGRES_HOST', ''),
-        'PORT': os.getenv('POSTGRES_PORT', 5432)
-
+        'ENGINE': 'djongo',
+        'ENFORCE_SCHEMA': True,
+        'NAME': 'django',
+        'HOST': 'mongod',
+        'PORT': 27017,
+        'USER': 'root',
+        'PASSWORD': 'pleaseUseAStr0ngPassword',
+        'AUTH_SOURCE': 'admin',
+        'AUTH_MECHANISM': 'SCRAM-SHA-1',
     }
 }
 

@@ -2,12 +2,14 @@
 ######################
 # django requirements#
 ######################
-Django
+Django==2.2
 djangorestframework
 uWSGI
 python-dotenv
 pytz
-psycopg2
+#psycopg2
+djongo
 kombu
 tweepy
 lupyne
+sqlparse==0.2.4

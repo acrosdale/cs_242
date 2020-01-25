@@ -4,31 +4,28 @@ services:
   ############################
   # Built from remote images #
   ############################
-  db:
-    container_name: postgres_db
-    image: postgres:11.4
-
-    # Expose the port db_nw
-    expose:
-      - 5432
-
-    volumes:
-      - ./run:/var/lib/postgresql/data/pgdata
-    # Set some environment variables to be used in the application
-    env_file:
-      - dev.env
-
+  mongod:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pleaseUseAStr0ngPassword
+      MONGO_INITDB_DATABASE: django
     networks:
       - db_nw
 
-  # Database gui
-  adminer:
-    image: adminer
+  mongo-express:
+    image: mongo-express
+#    restart: always
     ports:
-      - 8090:8080
+      - 8081:8081
+    depends_on:
+      - mongod
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pleaseUseAStr0ngPassword
+      ME_CONFIG_MONGODB_SERVER : mongod
     networks:
       - db_nw
-
 
   ###############################
   # Built from local Dockerfile #
@@ -64,7 +61,7 @@ services:
       - 8000
 
     depends_on:
-      - db
+      - mongod
 
     # Set some environment variables to be used in the application
     env_file:

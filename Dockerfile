@@ -32,7 +32,6 @@ COPY requirements.txt /tmp/
 
 RUN apk update \
     && apk add --virtual build-deps gcc python3-dev libc-dev linux-headers musl-dev \
-    && apk add postgresql-dev \
     && apk add pcre-dev \
     && pip install --upgrade pip \
     && pip install -r /tmp/requirements.txt \

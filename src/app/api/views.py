@@ -2,15 +2,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from twit.models import Tweet, TwitUser
 from .serializers import TweetSerializer
+from dateutil import parser
+import pytz
 
 
 # Create your views here.
 class TestApi(APIView):
 
 	def get(self, request):
-		#
+
 		sample = {
-			'date_created': 'Wed Oct 10 20:19:24 +0000 2018',
+			'date_created': parser.parse('Wed Oct 10 20:19:24 +0000 2018').replace(tzinfo=pytz.utc),
 			'text': 'blah',
 			'coordinates': [-125.3156, 126.4538],
 			'hashtags': ['ucr', 'Riverside'],

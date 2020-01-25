@@ -58,7 +58,7 @@ class TwitUserForm(forms.ModelForm):
 
 
 class Tweet(models.Model):
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField()
     text = models.TextField()
     coordinates = models.ListField()
     hashtags = models.ListField()

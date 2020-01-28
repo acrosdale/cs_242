@@ -49,7 +49,7 @@ class TwitStreamer(object):
 
 class TwitSearch(object):
 
-	def __init__(self):
+	def __init__(self,keywords):
 		# init tweepy auth
 		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
 		self.api = tweepy.API(auth)

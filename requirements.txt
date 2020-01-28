@@ -2,7 +2,7 @@
 ######################
 # django requirements#
 ######################
-Django==2.2
+Django==2.2.9
 djangorestframework
 uWSGI
 python-dotenv

@@ -40,27 +40,26 @@ RUN apk update \
 ##################### User  ############################
 
 # add non root user. NEVER RUN CODE AS ROOT
-RUN adduser -h $LOCATION/$USER -D -s /bin/sh $USER
+#RUN adduser -h $LOCATION/$USER -D -s /bin/sh $USER
 
 # change working dir to non root user dir
 WORKDIR $LOCATION/$USER
 
 # make the /location/user/sites folder to store project
 # change owner of /location/user to user1
-RUN mkdir -p $PROJECT_DIR \
-    && chown -R $USER:$USER .
+RUN mkdir -p $PROJECT_DIR
+#\&& chown -R $USER:$USER .
 
 # set USER to be use for any RUN, CMD and ENTRYPOINT instructions that follow
-USER $USER
+#USER $USER
 
 ##################### Project  ############################
 
 # copy current project into docker sites/project_name
-COPY --chown=$USER:$USER . $PROJECT_DIR
+COPY . $PROJECT_DIR
 
 # changes working project dir
 WORKDIR $PROJECT_DIR
 
 # run start up script in
 ENTRYPOINT scripts/$SCRIPT_NAME
-

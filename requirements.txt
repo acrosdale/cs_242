@@ -13,3 +13,4 @@ kombu
 tweepy
 lupyne
 sqlparse==0.2.4
+geopy

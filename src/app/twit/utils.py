@@ -1,6 +1,7 @@
 import tweepy
 from django.conf import settings
 from pymongo import MongoClient
+import json
 
 
 def GetMongo_client(collection_name='django'):
@@ -21,9 +22,23 @@ def GetMongo_client(collection_name='django'):
 
 class TwitStreamListener(tweepy.StreamListener):
 
-	def on_status(self, status):
-		# integrate orm here to store on the model
-		print(status.text)
+	def __init__(self):
+		self.tweetCount = 0
+
+	def on_connect(self):
+		print("Connection established!!")
+
+	def on_disconnect(self,notice):
+		print("Connection lost!! : ", notice)
+
+	def on_data(self, data):
+		# process data here
+		all_data = json.loads(data)
+		print(all_data)
+
+		self.tweetCount += 1
+		# this stop the streamer
+		return False
 
 	def on_error(self, status_code):
 		if status_code in [420, 429]:
@@ -33,27 +48,32 @@ class TwitStreamListener(tweepy.StreamListener):
 
 class TwitStreamer(object):
 
-	def __init__(self):
+	# use geopy to get coardinates location and index it
 
-		# init tweepy auth
-		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-		api = tweepy.API(auth)
+	def __init__(self,total_tweets):
+		isinstance(total_tweets, int)
 
-		# init twit stream
-		self.Stream = tweepy.Stream(auth=api.auth, listener=TwitStreamListener())
+		auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
+		auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_SECRET)
+		self.Stream = tweepy.Stream(auth, listener=TwitStreamListener())
 
-	def start(self):
-		# exit on status_code in [420, 429] or ctrl C
-		pass
+	def start(self, keywords):
+		isinstance(keywords, list)
+		assert len(keywords) > 0, 'keywords list is empty'
+		# streamer docs
+		# https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
+		# self.Stream.filter(track=["car"])
+		self.Stream.filter(language=['en'],track=keywords)
 
 
-class TwitSearch(object):
 
-	def __init__(self,keywords):
-		# init tweepy auth
-		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-		self.api = tweepy.API(auth)
-		self.keywords = keyswords
-
-	def start(self):
-		pass
+# class TwitSearch(object):
+#
+# 	def __init__(self,keywords):
+# 		# init tweepy auth
+# 		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
+# 		self.api = tweepy.API(auth)
+# 		self.keywords = keyswords
+#
+# 	def start(self):
+# 		pass

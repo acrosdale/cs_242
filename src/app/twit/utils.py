@@ -63,7 +63,7 @@ class TwitStreamer(object):
 		# streamer docs
 		# https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
 		# self.Stream.filter(track=["car"])
-		self.Stream.filter(language=['en'],track=keywords)
+		self.Stream.filter(languages=['en'],track=keywords)
 
 
 

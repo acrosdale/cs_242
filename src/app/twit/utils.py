@@ -1,4 +1,5 @@
 import tweepy
+from .models import Tweetv2, TwitUserv2
 from django.conf import settings
 from pymongo import MongoClient
 import json
@@ -22,8 +23,9 @@ def GetMongo_client(collection_name='django'):
 
 class TwitStreamListener(tweepy.StreamListener):
 
-	def __init__(self):
+	def __init__(self, tweetCount):
 		self.tweetCount = 0
+		self.tweetLimit = tweetCount
 
 	def on_connect(self):
 		print("Connection established!!")
@@ -32,13 +34,26 @@ class TwitStreamListener(tweepy.StreamListener):
 		print("Connection lost!! : ", notice)
 
 	def on_data(self, data):
-		# process data here
-		all_data = json.loads(data)
-		print(all_data)
+		if self.tweetCount < self.tweetLimit:
+			# process data here
+			all_data = json.loads(data)
+			#if all_data['coordinates'] is not None:
+			user = dict((k, all_data['user'][k]) for k in ('name', 'screen_name', 'location', 'description'))
 
-		self.tweetCount += 1
-		# this stop the streamer
-		return False
+			hashtags = list(k['text'] for k in all_data['entities']['hashtags'])
+			entry = {
+				#'created_at': all_data['created_at'].split()[:4],
+				'text': all_data['text'],
+				'coordinates': all_data.get('coordinates', list()),
+				'hashtags': hashtags,
+				'user': TwitUserv2(**user)
+			}
+			Tweetv2(**entry).save()
+			print(data)
+			self.tweetCount += 1
+		else:
+			# this stop the streamer
+			return False
 
 	def on_error(self, status_code):
 		if status_code in [420, 429]:
@@ -55,7 +70,7 @@ class TwitStreamer(object):
 
 		auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
 		auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_SECRET)
-		self.Stream = tweepy.Stream(auth, listener=TwitStreamListener())
+		self.Stream = tweepy.Stream(auth, listener=TwitStreamListener(total_tweets))
 
 	def start(self, keywords):
 		isinstance(keywords, list)

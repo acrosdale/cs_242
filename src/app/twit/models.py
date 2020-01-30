@@ -26,6 +26,14 @@ class TwitUser(models.Model):
         abstract = True
 
 
+class TwitUserv2(models.Model):
+    user_id = models.PositiveIntegerField()
+    name = models.CharField()
+    screen_name = models.CharField()
+    location = models.CharField()
+    description = models.TextField()
+
+
 class TwitUserForm(forms.ModelForm):
     class Meta:
         model = TwitUser
@@ -55,6 +63,18 @@ class TwitUserForm(forms.ModelForm):
 #         exclude = (
 #             "id","_id",
 #         )
+
+
+class Tweetv2(models.Model):
+    #created_at = models.DateTimeField()
+    text = models.TextField()
+    coordinates = models.ListField()
+    hashtags = models.ListField()
+    user = models.EmbeddedField(
+        model_container=TwitUser
+    )
+
+    objects = models.DjongoManager()
 
 
 class Tweet(models.Model):

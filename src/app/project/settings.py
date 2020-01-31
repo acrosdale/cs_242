@@ -55,7 +55,7 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development').lower()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
-if SECRET_KEY is '':
+if SECRET_KEY == '':
     raise ImproperlyConfigured(
         "SECRET_KEY does not exist, but is required for setting up environment"
     )
@@ -152,7 +152,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'ENFORCE_SCHEMA': True,
+        'ENFORCE_SCHEMA': False,
         'NAME': 'django',
         'HOST': 'mongod',
         'PORT': 27017,

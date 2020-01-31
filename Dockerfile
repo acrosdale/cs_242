@@ -1,5 +1,5 @@
 # python
-FROM python:3.7-alpine
+FROM coady/pylucene
 
 LABEL "MAINTAINER" = "Alexander Crosdale"
 
@@ -30,28 +30,15 @@ ENV SCRIPT_NAME=$SCRIPT
 
 COPY requirements.txt /tmp/
 
-RUN apk update \
-    && apk add --virtual build-deps gcc python3-dev libc-dev linux-headers musl-dev \
-    && apk add pcre-dev \
-    && pip install --upgrade pip \
-    && pip install -r /tmp/requirements.txt \
-    && apk del build-deps
+RUN pip install --upgrade pip \
+&& pip install -r /tmp/requirements.txt
 
 ##################### User  ############################
-
-# add non root user. NEVER RUN CODE AS ROOT
-#RUN adduser -h $LOCATION/$USER -D -s /bin/sh $USER
 
 # change working dir to non root user dir
 WORKDIR $LOCATION/$USER
 
-# make the /location/user/sites folder to store project
-# change owner of /location/user to user1
 RUN mkdir -p $PROJECT_DIR
-#\&& chown -R $USER:$USER .
-
-# set USER to be use for any RUN, CMD and ENTRYPOINT instructions that follow
-#USER $USER
 
 ##################### Project  ############################
 

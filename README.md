@@ -9,7 +9,7 @@
 ### Capture the stream
 1. After compose,enter the `django_twitter` container
 ```bash
-sudo docker exec -it django_twitter 
+sudo docker exec -it django_twitter bash
 ```
 
 if not work tired:

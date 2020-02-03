@@ -2,6 +2,7 @@
 
 ## Project Structure
 
+## How to get db
 `from twit.utils import GetMongo_client`.     
 `cs_242/src/app/twit/utils.py` , the class of GetMongo_client, get the mogodb variable
 

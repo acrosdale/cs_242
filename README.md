@@ -13,7 +13,7 @@ sudo docker exec -it django_twitter bash
 ```
 
 if not work tired:
-`docker-compose build --no -cache`
+`docker-compose build --no-cache`
 
 2. Get into management shell
 ```bash

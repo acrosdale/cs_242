@@ -7,7 +7,7 @@
 
 
 ### Capture the stream
-1. Enter the `django_twitter` container
+1. After compose,enter the `django_twitter` container
 ```bash
 sudo docker exec -it django_twitter 
 ```

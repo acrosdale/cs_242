@@ -4,6 +4,9 @@
 `from twit.indexer import *`.    
 `ind=IndexManager()`
 
+### import db variable
+`from twit.utils import GetMongo_client`.    
+`db = GetMongo_client()`.   
 
 ### set the indexer     
 `from lupyne import engine`.        

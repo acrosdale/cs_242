@@ -1,6 +1,4 @@
 from djongo import models
-<<<<<<< HEAD
-=======
 from django import forms
 
 # created_at: utc_String

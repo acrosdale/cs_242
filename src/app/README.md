@@ -1,8 +1,8 @@
 
 ##How to test:
 ### import the indexer
-`from twit.indexer import *`. 
-`ind=IndexManager()`. 
+`from twit.indexer import *`.    
+`ind=IndexManager()`
 
 
 `from lupyne import engine. 

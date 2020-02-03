@@ -4,11 +4,17 @@
 `cs_242/src/app/twit/utils.py` , the class of GetMongo_client, get the mogodb variable
 
 ## Usage
+
+
 ### Capture the stream
 1. Enter the `django_twitter` container
 ```bash
-sudo docker exec -it django_twitter
+sudo docker exec -it django_twitter 
 ```
+
+if not work tired:
+`docker-compose build --no -cache`
+
 2. Get into management shell
 ```bash
 python src/app/manage.py shell

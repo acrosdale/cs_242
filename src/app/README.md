@@ -1,5 +1,5 @@
 
-##How to test:
+# How to test:
 ### import the indexer
 `from twit.indexer import *`.    
 `ind=IndexManager()`

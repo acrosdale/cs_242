@@ -5,6 +5,7 @@
 `ind=IndexManager()`
 
 
+### set the indexer     
 `from lupyne import engine`.        
 `indexer= engine.Indexer()`.         
 `indexer.set('usr_name',stored=True) #user name is done`.         

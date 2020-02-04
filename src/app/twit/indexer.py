@@ -56,7 +56,7 @@ class IndexManager(object):
         return tuple_list
             
         #for item in tuple_list:
-        #    indexer.add(docid=str(item[0]), hashtag=' '.join([ w,i for i,w in enumerate(item[1]) ]))
+        #    indexer.add(docid=str(item[0]), hashtag=' '.join(item[1]))
         #    indexer.commit()   
 
     def index_commit(self):

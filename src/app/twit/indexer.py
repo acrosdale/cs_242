@@ -38,9 +38,9 @@ class IndexManager(object):
         #assume queryset_cursor is db variable, run db = GetMongo_client() out side
         # return as [(docid,[hashtag1,hashtag2....]),.......]
         indexer.set('docid', stored=True)#username
-        indexer.set('text', engine.Field.Text)
-        indexer.set('hashtag', stored=True)#tweet
-        indexer.set('text', engine.Field.Text)
+        indexer.set('hashtag', engine.Field.Text)
+        #indexer.set('hashtag', stored=True)#tweet
+        #indexer.set('text', engine.Field.Text)
         
         tweet=queryset_cursor.twit_tweet.find()
         list_of_tweet=list(queryset_cursor.twit_tweet.find())
@@ -55,6 +55,9 @@ class IndexManager(object):
             
         return tuple_list
             
+        #for item in tuple_list:
+        #    indexer.add(name=item[0], text=item[1]) 
+        #    indexer.commit()   
 
     def index_commit(self):
         assert self.indexer is not None, 'index is not found'

@@ -83,3 +83,14 @@ class IndexManager(object):
     def index_commit(self):
         assert self.indexer is not None, 'index is not found'
         self.indexer.commit()
+
+    def char_ngram_preprocessing(self,word_list,ngram):
+        final=''
+        for word in word_list:
+            sub=''
+            for char in word:
+                sub+=char*ngram
+            final+=sub+' '
+        
+        return final
+                

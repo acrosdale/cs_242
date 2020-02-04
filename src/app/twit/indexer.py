@@ -27,8 +27,29 @@ class IndexManager(object):
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'
         # code to index the field in the tweets
+        indexer.set('usr_id', stored=True)
+        indexer.set('tweet', stored=True)
+        indexer.set('descrpt', stored=True)
+        indexer.set('coord', stored=True)
+        indexer.set('screen_name', stored=True)
+        indexer.set('loctn', stored=True)
 
-        pass
+        list_of_tweet = list(queryset_cursor.twit_tweet.find())
+        tuple_list = []
+        for obj in list_of_tweet:
+            user = obj['user']['id']
+            tweet = obj['text']
+            descrpt = obj['user']['description']
+            coord = obj['coordinates']['coordinates']
+            screenname = obj['user']['screen_name']
+            loctn = obj['place']['country']
+            tuple_list.append((user, tweet, descrpt, coord, screenname, loctn))
+        for item in tuple_list:
+            indexer.add(usr_id=item[0], tweet=item[1], descrpt=item[2], coord=item[3], screen_name=item[4], loctn= item[5])
+            indexer.commit()
+
+        return indexer
+        
 
     def index_hashtags(self, queryset_cursor):
         assert self.indexer != None

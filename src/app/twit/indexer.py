@@ -86,11 +86,8 @@ class IndexManager(object):
 
     def char_ngram_preprocessing(self,word_list,ngram):
         final=''
-        for word in word_list:
-            sub=''
-            for char in word:
-                sub+=char*ngram
-            final+=sub+' '
+        for i,char in enumerate(word_list):
+            final+=word_list[i:i+ngram]
         
         return final
                 

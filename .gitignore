@@ -1,6 +1,7 @@
 run/
 resource/logs/
 resource/storage/
+src/app/twit/migrations/
 .idea/
 *.pyc
 *.pyo

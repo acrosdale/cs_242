@@ -202,7 +202,31 @@ STATIC_ROOT = STATIC_DIR
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "media")
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = ''
-CONSUMER_KEY = 'Omm9dSSdTOFA0FUmOYSPAvMTe'
-CONSUMER_SECRET = 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt'
-ACCESS_TOKEN = '1217817849827213317-50bABazFrgYVIFHEkAKc7G5ucuv5Vv'
-ACCESS_SECRET = 'CLxk6nm6iCC2jJ6obDnBh87vXflgu80YtDeYfa6h6lV19'
+
+TWITTER_CREDS = [
+    {
+        'CONSUMER_KEY': 'Omm9dSSdTOFA0FUmOYSPAvMTe',
+        'CONSUMER_SECRET': 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt',
+        'ACCESS_TOKEN': '1217817849827213317-50bABazFrgYVIFHEkAKc7G5ucuv5Vv',
+        'ACCESS_SECRET': 'CLxk6nm6iCC2jJ6obDnBh87vXflgu80YtDeYfa6h6lV19'
+    }
+]
+
+TWEET_TRACKS = [
+    'BTS',
+    'LeBron James',
+    'Kanye West',
+    'Drake',
+    'EXO',
+    'Ariana Grande',
+    'Cardi B',
+    'Beyoncé',
+    'Park Ji-min',
+    'Nicki Minaj'
+]
+
+
+# CONSUMER_KEY = 'Omm9dSSdTOFA0FUmOYSPAvMTe'
+# CONSUMER_SECRET = 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt'
+# ACCESS_TOKEN = '1217817849827213317-50bABazFrgYVIFHEkAKc7G5ucuv5Vv'
+# ACCESS_SECRET = 'CLxk6nm6iCC2jJ6obDnBh87vXflgu80YtDeYfa6h6lV19'

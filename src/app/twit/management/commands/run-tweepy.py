@@ -1,27 +1,99 @@
 import tweepy
-import logging
-import random
+import math
 import multiprocessing
-
-from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.db import connection
+from django.core.management.base import BaseCommand
+from app.twit.utils import TwitStreamer
 
-from app.twit.utils import TwitSearch, TwitStreamer
 
-
-class GetTwitterData(BaseCommand):
+class Command(BaseCommand):
 	help = "This will run tweepy and collect tweets via twitter API"
-	max_stream_processes = 1
-	max_search_processes = 1
+	run_default = True # this one run .sample()
+	total_default = 1024*1024*1024*1  # 1 gig
 
-	"https://stackoverflow.com/questions/1808855/getting-new-twitter-api-consumer-and-secret-keys"
+	def add_arguments(self, parser):
+		parser.add_argument('total', type=int, help='Indicates how many Gigs of data to retrieve')
 
-	"""
-		save file : text, timestamp, geolocation, user of tweet, links, hashtag
-	"""
+		# Optional argument
+		parser.add_argument('-p', '--process', type=int, help='How many processes to launch', )
 
-	def handle(self, *args, **options):
-		pass
+	def handle(self, *args, **kwargs):
+
+		# retrieve args
+		total_data = kwargs['total']
+		num_processes = kwargs['process']
+
+		# assert vals
+		assert total_data >= 1, 'total must >= 1'
+
+		total_data *= self.total_default
+		print(total_data)
+
+		if num_processes:
+			assert num_processes >= 1, 'num_process must >= 1'
+			assert num_processes == len(settings.TWITTER_CREDS)
+		else:
+			num_processes = 1
+
+		if num_processes == 1:
+			streamer = TwitStreamer(total_data, settings.TWITTER_CREDS[0])
+			streamer.start()
+		else:
+			# since the listen count the data in db
+			# all listner will exit when all listen add x gigs to db
+			total_data_split = total_data
+			init_sample = False
+			running_processes = []
+
+			mylist = settings.TWEET_TRACKS
+			parts = 1
+			track_split = [mylist[(i * len(mylist)) // parts:((i + 1) * len(mylist)) // parts] for i in range(parts)]
+
+			for cred in settings.TWITTER_CREDS:
+				if not init_sample:
+					worker = TwitStreamer(total_data_split, cred)
+					process = multiprocessing.Process(target=worker.start)
+					process.start()
+					running_processes.append(process)
+					init_sample = True
+				else:
+					worker = TwitStreamer(total_data_split, cred)
+					process = multiprocessing.Process(target=worker.start_track, args=(track_split.pop(),))
+					process.start()
+					running_processes.append(process)
+
+			for proc in running_processes:
+				proc.join()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		# print('Starting TWIT CMD')
 		#
@@ -63,25 +135,5 @@ class GetTwitterData(BaseCommand):
 		# 		running_processes_cleared = True
 		# print('FINISHED CLID INTEGRATION')
 
-	def twit_streaming(self):
-		pass
-
-	def twit_search(self):
-		pass
 
 
-
-
-"""
-	twitter attribute
-	
-	created_at	: utc_String
-	text		: String
-	user		: user-obj
-	coordinates	: coordinates-obj  OR/AND  place : place-obj
-	
-	entities 	: Entities obj <---HashTag are here
-	"lang"		: "en"
-
-
-"""

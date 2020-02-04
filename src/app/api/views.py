@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# from twit.models import Tweet
+from twit.models import Tweet
 # from .serializers import TweetSerializer
 # from dateutil import parser
 # import pytz

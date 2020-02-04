@@ -50,7 +50,7 @@ class TwitStreamListener(tweepy.StreamListener):
             # process data here
             all_data = json.loads(data)
             if 'created_at' in all_data and all_data['lang'] == 'en':
-                if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0 :
+                if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0:
                     all_data['created_at'] = parser.parse(all_data['created_at'])
                     db.twit_tweet.insert_one(all_data)
                     size = db.command('collstats', 'twit_tweet')['size']
@@ -71,43 +71,32 @@ class TwitStreamer(object):
     The object to get all tweets from the stream
 
     """
-    def __init__(self,total_tweets_size):
+    def __init__(self, total_tweets_size, creds):
         """
         Construct a new 'TwitStreamer' object.
 
         :param total_tweets_size: The size of data to be captured in bytes. To collect 5GB \
         data, set it to 1024*1024*1024*5. The actual data size may be slightly larger
         """
-        isinstance(total_tweets_size, int)
+        assert isinstance(total_tweets_size, int)
+        assert isinstance(creds, dict)
 
-        auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-        auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_SECRET)
+        auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+        auth.set_access_token(creds['ACCESS_TOKEN'], creds['ACCESS_SECRET'])
         self.Stream = tweepy.Stream(auth, listener=TwitStreamListener(total_tweets_size))
 
     def start(self):
-        self.Stream.sample()
         """
         Start stream capture and store tweets to MongoDB
         """
-    # streamer docs
-    # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
-
-    def start(self, keywords):
-        isinstance(keywords, list)
-        assert len(keywords) > 0, 'keywords list is empty'
         # streamer docs
-        # https://developer.twitter.com/en/docs/tweets/filteIndexManagerr-realtime/guides/basic-stream-parameters
-        # self.Stream.filter(track=["car"])
-        self.Stream.filter(languages=['en'], track=keywords)
+        # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
+        self.Stream.sample()
 
-
-# class TwitSearch(object):
-#
-# 	def __init__(self,keywords):
-# 		# init tweepy auth
-# 		auth = tweepy.AppAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-# 		self.api = tweepy.API(auth)
-# 		self.keywords = keyswords
-#
-# 	def start(self):
-# 		pass
+    def start_track(self, track_list):
+        """
+        Start stream capture and store tweets to MongoDB
+        """
+        # streamer docs
+        # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
+        self.Stream.filter(track=track_list)

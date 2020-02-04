@@ -35,7 +35,25 @@ class IndexManager(object):
         # we need to index hastag seperately
         # note on hashtag the name will duplicates
         # so when searching retrieve id as a set()
-        pass
+        #assume queryset_cursor is db variable, run db = GetMongo_client() out side
+        indexer.set('docid', stored=True)#username
+        indexer.set('text', engine.Field.Text)
+        indexer.set('hashtag', stored=True)#tweet
+        indexer.set('text', engine.Field.Text)
+        
+        tweet=queryset_cursor.twit_tweet.find()
+        list_of_tweet=list(queryset_cursor.twit_tweet.find())
+        tuple_list=[]
+        for obj in list_of_tweet:
+            docid=obj['_id']
+            hashtags=obj['entities']['hashtags']
+            hash_list=[]
+            for item in hashtags:
+                hash_list.append(item['text'])
+            tuple_list.append((docid,hash_list))
+            
+        return tuple_list
+            
 
     def index_commit(self):
         assert self.indexer is not None, 'index is not found'

@@ -36,6 +36,7 @@ class IndexManager(object):
         # note on hashtag the name will duplicates
         # so when searching retrieve id as a set()
         #assume queryset_cursor is db variable, run db = GetMongo_client() out side
+        # return as [(docid,[hashtag1,hashtag2....]),.......]
         indexer.set('docid', stored=True)#username
         indexer.set('text', engine.Field.Text)
         indexer.set('hashtag', stored=True)#tweet

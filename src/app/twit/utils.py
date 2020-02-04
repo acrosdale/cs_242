@@ -34,7 +34,7 @@ def loadCSVInMongo(filePath='twit/storage/data.csv'):
 class TwitStreamListener(tweepy.StreamListener):
     def __init__(self, tweet_limit):
         self.tweet_limit = tweet_limit
-        self.progress_bar = bar.p(max_value=self.tweet_limit)
+        self.progress_bar = bar.ProgressBar(max_value=self.tweet_limit)
 
     def on_connect(self):
         print("Connection established!!")

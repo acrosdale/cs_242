@@ -74,11 +74,12 @@ class IndexManager(object):
                 hash_list.append(item['text'])
             tuple_list.append((docid,hash_list))
             
-        return tuple_list
+        #return tuple_list
             
-        #for item in tuple_list:
-        #    indexer.add(docid=str(item[0]), hashtag=' '.join(item[1]))
-        #    indexer.commit()   
+        for item in tuple_list:
+            indexer.add(docid=str(item[0]), hashtag=' '.join(item[1]))
+        
+        self.indexer=indexer
 
     def index_commit(self):
         assert self.indexer is not None, 'index is not found'

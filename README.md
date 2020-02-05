@@ -18,18 +18,20 @@ sudo docker exec -it django_twitter bash
 if not work tired:
 `docker-compose build --no-cache`
 
-2. Get into management shell
+2. Run management cmds
 ```bash
-python src/app/manage.py shell
+cd src/app
+
+python manage.py run-tweepy 1 # this collect 1Gb of data
+
+python manage.py run-tweepy 1 -p 2 # this collect 1Gb of data with 2 parallel process limit 1 per account
+
+python manage.py load-csv -fp 'twit_tweet-standard.json' # loads the json file name.json located in resources/storage into db
+
+python manage.py index-tweets # creates two indexes ['tweet_index', 'tag_index']
+
 ```
-3. Use the following in interactive Python shell. Replace `size` with the number of bytes to collect
-```python
-from twit.utils import TwitStreamer
-size = 1024*1024*1024*5 # Get 5GB of data
-ts = TwitStreamer(size)
-ts.start()
-```
-4. Download the data from MongoDB Express
+3. Download the data from MongoDB Express
 	* Go to [https://localhost:8081](https://localhost:8081), click on **django**
 	* Export data from `twit_tweet`
 

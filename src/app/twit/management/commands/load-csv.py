@@ -1,11 +1,7 @@
-import tweepy
-import math
-import multiprocessing
-from django.conf import settings
-from django.db import connection
 from django.core.management.base import BaseCommand
 from app.twit.utils import loadCSVInMongo
-
+from django.conf import settings
+import os
 
 class Command(BaseCommand):
     help = "This will run tweepy and collect tweets via twitter API"
@@ -24,6 +20,11 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         # retrieve args
-        total_data = kwargs.get('filepath', None)
-        print(total_data, 'HEREERRRRR')
+        fp = kwargs.get('filepath', None)
+
+        path = os.path.join(settings.STORAGE_DIR, fp)
+
+        loadCSVInMongo(path)
+
+
 

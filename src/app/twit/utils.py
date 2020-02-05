@@ -3,33 +3,38 @@ from progressbar import bar
 from django.conf import settings
 from pymongo import MongoClient
 from dateutil import parser
-import pandas as pd
 import json
+from bson.objectid import ObjectId
 
 
 def GetMongo_client(collection_name='django'):
-    a = 'mongodb://root:pleaseUseAStr0ngPassword@mongod:27017/admin'
-    client = MongoClient(a)
+    client = MongoClient(settings.MONGO_URI)
     db = client['%s' % collection_name]
-
-    # >> > db.twit_tweet
-    # Collection(
-    # 	Database(MongoClient(host=['mongod:27017'], document_class=dict, tz_aware=False, connect=True), 'django'),
-    # 	'twit_tweet')
-    # >> > db.list_collection_names()
-    # ['__schema__', 'twit_tweet', 'django_migrations']
-
     return db
 
 
-def loadCSVInMongo(filePath='twit/storage/data.csv'):
+def loadCSVInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standard.json')):
     db = GetMongo_client()
-    df = pd.read_csv(filePath)
-    records_ = json.loads(df.to_json(orient='records'))
-    # print(records_)
-    db.twit_tweet.remove()
-    result = db.twit_tweet.insert_many(records_)
-    print(db.twit_tweet.count())
+    # not to self use standard export feature from mongo
+    # it export lines of json data
+    with open(filepath) as f:
+        for line in f:
+            data = json.loads(line)
+            data['_id'] = ObjectId(data['_id']['$oid'])
+            try:
+                # dupes are ignored
+                db.twit_tweet.insert_one(data)
+            except:
+                pass
+
+    # df = pd.read_json(filePath, orient='columns')
+    # records_ = df
+    # print(records_[0])
+    # return
+    # db.twit_tweet.remove()
+    # result = db.twit_tweet.insert_many(data)
+    print('total_record added', db.twit_tweet.count())
+
 
 class TwitStreamListener(tweepy.StreamListener):
     def __init__(self, tweet_limit):
@@ -44,21 +49,24 @@ class TwitStreamListener(tweepy.StreamListener):
         print("Connection lost!! : ", notice)
 
     def on_data(self, data):
-        db = GetMongo_client()
-        size = db.command('collstats', 'twit_tweet')['size']
-        if size < self.tweet_limit:
-            # process data here
-            all_data = json.loads(data)
-            if 'created_at' in all_data and all_data['lang'] == 'en':
-                if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0:
-                    all_data['created_at'] = parser.parse(all_data['created_at'])
-                    db.twit_tweet.insert_one(all_data)
-                    size = db.command('collstats', 'twit_tweet')['size']
-                    self.progress_bar.update(size if size <= self.tweet_limit else self.tweet_limit)
-        else:
-            self.progress_bar.finish()
-            # this stop the streamer
-            # return False
+        try:
+            db = GetMongo_client()
+            size = db.command('collstats', 'twit_tweet')['size']
+            if size < self.tweet_limit:
+                # process data here
+                all_data = json.loads(data)
+                if 'created_at' in all_data and all_data['lang'] == 'en':
+                    if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0:
+                        all_data['created_at'] = parser.parse(all_data['created_at'])
+                        db.twit_tweet.insert_one(all_data)
+                        size = db.command('collstats', 'twit_tweet')['size']
+                        self.progress_bar.update(size if size <= self.tweet_limit else self.tweet_limit)
+            else:
+                self.progress_bar.finish()
+                # this stop the streamer
+                # return False
+        except Exception as e:
+            print(str(e))
 
     def on_error(self, status_code):
         if status_code in [420, 429]:

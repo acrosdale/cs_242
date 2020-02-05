@@ -16,6 +16,7 @@ from django.core.exceptions import ImproperlyConfigured
 # Other
 from dotenv import load_dotenv
 import os
+import re
 
 # Directories
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -212,6 +213,8 @@ TWITTER_CREDS = [
     }
 ]
 
+MONGO_URI = 'mongodb://root:pleaseUseAStr0ngPassword@mongod:27017/admin'
+
 TWEET_TRACKS = [
     'BTS',
     'LeBron James',
@@ -224,7 +227,24 @@ TWEET_TRACKS = [
     'Park Ji-min',
     'Nicki Minaj'
 ]
-
+EMOJI_PATTERN = re.compile("["
+                u"\U0001F600-\U0001F64F"  # emoticons
+                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                u"\U00002702-\U000027B0"
+                u"\U000024C2-\U0001F251"
+                u"\U0001f926-\U0001f937"
+                u'\U00010000-\U0010ffff'
+                u"\u200d"
+                u"\u2640-\u2642"
+                u"\u2600-\u2B55"
+                u"\u23cf"
+                u"\u23e9"
+                u"\u231a"
+                u"\u3030"
+                u"\ufe0f"
+    "]+", flags=re.UNICODE)
 
 # CONSUMER_KEY = 'Omm9dSSdTOFA0FUmOYSPAvMTe'
 # CONSUMER_SECRET = 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt'

@@ -115,7 +115,7 @@ class IndexManager(object):
 
         self.index_commit()
 
-    def index_hashtags(self, queryset_cursor):
+    def index_hashtags(self, queryset_cursor,ngram=0):
         assert self.indexer is not None
         # we need to index hastag seperately
         # note on hashtag the name will duplicates
@@ -140,10 +140,16 @@ class IndexManager(object):
                 for item in hashtags:
                     if item.get('text', None):
                         try:
-                            self.indexer.add(
-                                docid=docid,
-                                hashtag=item['text']
-                            )
+                            if ngram>1:
+                               self.indexer.add(
+                                   docid=docid,
+                                   hashtag=self.char_ngram_preprocessing(list(item['text']),ngram)
+                                )
+                            else:
+                               self.indexer.add(
+                                   docid=docid,
+                                   hashtag=item['text']
+                                )
                         except Exception as e:
                             print(str(e))
 

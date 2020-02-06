@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "TA script starting.....";
 
-#docker-compose  build --no-cache
+docker-compose  build --no-cache
 
 docker-compose up --detach
 

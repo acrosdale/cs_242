@@ -10,29 +10,38 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        # start lucene
-        lucene.initVM()
-        running_processes = list()
+        try:
+            # start lucene
+            lucene.initVM()
+        except:
+            print('cant start the lucene VM')
+
+
         try:
             mongo_db = GetMongo_client()
-            mongo_db_cursor = mongo_db.twit_tweet.find()
         except:
-            mongo_db_cursor = None
+            print('cant get mongo client')
+            return
 
         for index_name in ['tweet_index', 'tag_index']:
 
+            # get a fresh cursor for each worker
+            mongo_db_cursor = mongo_db.twit_tweet.find()
+
             if isinstance(mongo_db_cursor, Cursor):
+                worker = IndexManager()
                 if index_name == 'tweet_index':
-                    worker = IndexManager()
                     # delete the index to inorder to reindex
                     worker.remove_index(index_name)
                     worker.open_index(index_name)
                     worker.index_tweets(mongo_db_cursor)
                 else:
-                    worker = IndexManager()
                     # delete the index to inorder to reindex
                     worker.remove_index(index_name)
                     worker.open_index(index_name)
                     worker.index_hashtags(mongo_db_cursor)
 
+                worker.close_index()
+            else:
+                print('cant connect to mongo')
         print('done')

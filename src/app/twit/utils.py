@@ -107,4 +107,4 @@ class TwitStreamer(object):
         """
         # streamer docs
         # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
-        self.Stream.filter(track=track_list)
+        self.Stream.filter(languages=['en'], track=track_list)

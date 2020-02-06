@@ -133,20 +133,25 @@ class IndexManager(object):
         for obj in queryset_cursor:
 
             docid = str(obj.get('id'))
-            hashtags_obj = obj.get('entities')
+            hashtags_obj = obj.get('entities', None)
+
+            # skip id no tag are found
+            if not hashtags_obj:
+                continue
+
             hashtags = hashtags_obj.get('hashtags')
 
             if hashtags and docid:
                 for item in hashtags:
                     if item.get('text', None):
                         try:
-                            if ngram>1:
-                               self.indexer.add(
+                            if ngram > 1:
+                                self.indexer.add(
                                    docid=docid,
-                                   hashtag=self.char_ngram_preprocessing(list(item['text']),ngram)
+                                   hashtag=self.char_ngram_preprocessing(list(item['text']), ngram)
                                 )
                             else:
-                               self.indexer.add(
+                                self.indexer.add(
                                    docid=docid,
                                    hashtag=item['text']
                                 )
@@ -161,10 +166,9 @@ class IndexManager(object):
 
     # you dont need this. you most like access indexer wrong
     # based on the notes written in the report
-
     def char_ngram_preprocessing(self, word_list,ngram):
         final=[]
         for i,char in enumerate(' '.join(word_list)):
             final.append(word_list[i:i+ngram])
-        
+
         return final

@@ -167,8 +167,8 @@ class IndexManager(object):
     # you dont need this. you most like access indexer wrong
     # based on the notes written in the report
     def char_ngram_preprocessing(self, word_list,ngram):
-        final=[]
+        final=''
         for i,char in enumerate(' '.join(word_list)):
-            final.append(word_list[i:i+ngram])
+            final+=word_list[i:i+ngram]
 
         return final

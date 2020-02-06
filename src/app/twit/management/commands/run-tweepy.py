@@ -10,7 +10,7 @@ from app.twit.utils import TwitStreamer
 class Command(BaseCommand):
 	help = "This will run tweepy and collect tweets via twitter API"
 	run_default = True # this one run .sample()
-	total_default = 1024*1024*1024*1  # 1 gig
+	total_default = 1024*1024*1024*0.001 # 1 MB
 
 	def add_arguments(self, parser):
 		parser.add_argument('total', type=int, help='Indicates how many Gigs of data to retrieve')

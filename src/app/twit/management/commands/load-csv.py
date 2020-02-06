@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.twit.utils import loadCSVInMongo
+from app.twit.utils import loadJsonInMongo
 from django.conf import settings
 import os
 
@@ -21,9 +21,14 @@ class Command(BaseCommand):
         # retrieve args
         fp = kwargs.get('filepath', None)
 
-        path = os.path.join(settings.STORAGE_DIR, fp)
+        if fp:
 
-        loadCSVInMongo(path)
+            path = os.path.join(settings.STORAGE_DIR, fp)
+            try:
+                loadJsonInMongo(path)
+
+            except Exception as e:
+                print('could not load json file error %s' % str(e))
 
 
 

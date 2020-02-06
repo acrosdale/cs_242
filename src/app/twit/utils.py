@@ -13,16 +13,20 @@ def GetMongo_client(collection_name='django'):
     return db
 
 
-def loadCSVInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standard.json')):
+def loadJsonInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standard.json')):
     db = GetMongo_client()
     # not to self use standard export feature from mongo
     # it export lines of json data
     with open(filepath) as f:
         for line in f:
-            data = json.loads(line)
-            data['_id'] = ObjectId(data['_id']['$oid'])
             try:
-                # dupes are ignored
+                data = json.loads(line)
+
+                if data.get('_id'):
+                    _id = data.get('_id')
+                    if _id.get('$oid'):
+                        data['_id'] = ObjectId(data['_id']['$oid'])
+                    # dupes are ignored
                 db.twit_tweet.insert_one(data)
             except:
                 pass
@@ -38,7 +42,8 @@ def loadCSVInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standard
 
 class TwitStreamListener(tweepy.StreamListener):
     def __init__(self, tweet_limit):
-        self.tweet_limit = tweet_limit
+        self.db = GetMongo_client()
+        self.tweet_limit = tweet_limit + self.db.command('collstats', 'twit_tweet')['size']
         self.progress_bar = bar.ProgressBar(max_value=self.tweet_limit)
 
     def on_connect(self):
@@ -50,21 +55,21 @@ class TwitStreamListener(tweepy.StreamListener):
 
     def on_data(self, data):
         try:
-            db = GetMongo_client()
-            size = db.command('collstats', 'twit_tweet')['size']
+
+            size = self.db.command('collstats', 'twit_tweet')['size']
             if size < self.tweet_limit:
                 # process data here
                 all_data = json.loads(data)
                 if 'created_at' in all_data and all_data['lang'] == 'en':
                     if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0:
                         all_data['created_at'] = parser.parse(all_data['created_at'])
-                        db.twit_tweet.insert_one(all_data)
-                        size = db.command('collstats', 'twit_tweet')['size']
+                        self.db.twit_tweet.insert_one(all_data)
+                        size = self.db.command('collstats', 'twit_tweet')['size']
                         self.progress_bar.update(size if size <= self.tweet_limit else self.tweet_limit)
             else:
                 self.progress_bar.finish()
-                # this stop the streamer
-                # return False
+                # stop the streamer when progess is done
+                return False
         except Exception as e:
             print(str(e))
 
@@ -86,7 +91,7 @@ class TwitStreamer(object):
         :param total_tweets_size: The size of data to be captured in bytes. To collect 5GB \
         data, set it to 1024*1024*1024*5. The actual data size may be slightly larger
         """
-        assert isinstance(total_tweets_size, int)
+        # assert isinstance(total_tweets_size, int)
         assert isinstance(creds, dict)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])

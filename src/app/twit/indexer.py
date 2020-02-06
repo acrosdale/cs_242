@@ -153,6 +153,9 @@ class IndexManager(object):
         assert self.indexer is not None, 'index is not found'
         self.indexer.commit()
 
+    # you dont need this. you most like access indexer wrong
+    # based on the notes written in the report
+
     def char_ngram_preprocessing(self, word_list,ngram):
         final=''
         for i,char in enumerate(' '.join(word_list)):

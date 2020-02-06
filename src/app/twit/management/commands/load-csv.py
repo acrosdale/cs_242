@@ -3,10 +3,9 @@ from app.twit.utils import loadCSVInMongo
 from django.conf import settings
 import os
 
+
 class Command(BaseCommand):
-    help = "This will run tweepy and collect tweets via twitter API"
-    run_default = True # this one run .sample()
-    total_default = 1024*1024*1024*1  # 1 gig
+    help = "This will seed the db with data from a json file"
 
     def add_arguments(self, parser):
 

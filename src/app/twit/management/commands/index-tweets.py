@@ -6,7 +6,7 @@ from pymongo.cursor import Cursor
 
 
 class Command(BaseCommand):
-    help = "This will index all the tweets from mongodb. launch two process [index hashtag, index tweets]"
+    help = "This will index all the tweets from mongodb. index sequentially [index hashtag, index tweets]"
 
     def handle(self, *args, **kwargs):
 

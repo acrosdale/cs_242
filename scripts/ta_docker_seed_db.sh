@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "TA docker seed db script starting.....";
 
-cd src/app
+cd /home/django/sites/twitter/src/app
 
 # Seed database. MongoDb
 # load the file twit_tweet-standard.json in resources/storage

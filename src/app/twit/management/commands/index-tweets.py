@@ -39,6 +39,7 @@ class Worker(object):
             lucene.initVM()
         except:
             print('cant start the lucene VM')
+            return
 
         try:
             mongo_db = GetMongo_client()

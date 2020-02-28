@@ -2,7 +2,9 @@ import lucene
 import os
 from lupyne import engine
 from django.conf import settings
+from dateutil import parser
 import shutil
+import datetime
 
 import re
 
@@ -44,23 +46,28 @@ class IndexManager(object):
         elif index_name == 'tag_index':
             # create index
             self.indexer = engine.Indexer(path)
-            self.indexer.set('docid', stored=True)  # username
+            self.indexer.set('docid', stored=True)
+            self.indexer.set('rank', dimensions=1, stored=True)
             self.indexer.set('hashtag', engine.Field.Text)
+            self.indexer.fields['loctn'] = engine.NestedField('state.city')
+            self.indexer.set('date', engine.DateTimeField)
         else:
             # create index
             self.indexer = engine.Indexer(path)
 
             # code to index the field in the tweets
             self.indexer.set('docid', stored=True)
+            self.indexer.set('rank', dimensions=1, stored=True)
             self.indexer.set('tweet', engine.Field.Text)
             self.indexer.set('descrpt', engine.Field.Text)
             self.indexer.set('coord', engine.SpatialField)
             self.indexer.set('screen_name', engine.Field.Text)
-            # self.indexer.set('loctn', engine.Field.Text)
             self.indexer.fields['loctn'] = engine.NestedField('state.city')
+            self.indexer.set('date', engine.DateTimeField)
 
     def get_rank(self, tweet):
-        pass
+        assert isinstance(tweet, dict)
+        return 1.0
 
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'
@@ -68,6 +75,8 @@ class IndexManager(object):
         for obj in queryset_cursor:
             doc_id = str(obj.get('id'))
             tweet = obj.get('text', None)
+            date_created = parser.parse(obj.get('created_at'))
+            date_created = datetime.date(date_created.year, date_created.month, date_created.day)
 
             # removes emoji
             tweet = settings.EMOJI_PATTERN.sub('', tweet)
@@ -112,7 +121,9 @@ class IndexManager(object):
                     descrpt=descrpt,
                     coord=coord,
                     screen_name=screen_name,
-                    loctn=loctn
+                    loctn=loctn,
+                    date=date_created,
+                    rank=self.get_rank(obj)
                 )
             except Exception as e:
                 print(str(e))
@@ -138,10 +149,24 @@ class IndexManager(object):
 
             docid = str(obj.get('id'))
             hashtags_obj = obj.get('entities', None)
+            date_created = parser.parse(obj.get('created_at'))
+            date_created = datetime.date(date_created.year, date_created.month, date_created.day)
 
             # skip id no tag are found
             if not hashtags_obj:
                 continue
+
+            place_obj = obj.get('place', None)
+
+            if place_obj:
+                loctn = place_obj.get('full_name', None)
+
+                if loctn and len(loctn.split(',')) == 2:
+                    city, state = loctn.split(',')
+                    state = state.strip()
+                    loctn = state + '.' + city
+            else:
+                loctn = ''
 
             hashtags = hashtags_obj.get('hashtags')
 
@@ -156,8 +181,11 @@ class IndexManager(object):
                                 )
                             else:
                                 self.indexer.add(
-                                   docid=docid,
-                                   hashtag=item['text']
+                                    docid=docid,
+                                    hashtag=item['text'],
+                                    rank=self.get_rank(obj),
+                                    date=date_created,
+                                    loctn=loctn
                                 )
                         except Exception as e:
                             print(str(e))

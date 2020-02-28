@@ -22,7 +22,7 @@ if not work tired:
 ```bash
 cd src/app
 
-python manage.py run-tweepy 1 # this collect 1Gb of data
+python manage.py run-tweepy 1 # this collect 1Mb of data
 
 python manage.py run-tweepy 1 -p 2 # this collect 1Gb of data with 2 parallel process limit 1 per account
 

@@ -12,6 +12,7 @@ import re
 class IndexManager(object):
 
     def __init__(self):
+        # assert lucene.getVMEnv() or lucene.initVM()
         self.indexer = None
         # closing is handled automatically
 
@@ -57,6 +58,9 @@ class IndexManager(object):
             self.indexer.set('screen_name', engine.Field.Text)
             # self.indexer.set('loctn', engine.Field.Text)
             self.indexer.fields['loctn'] = engine.NestedField('state.city')
+
+    def get_rank(self, tweet):
+        pass
 
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'
@@ -172,3 +176,59 @@ class IndexManager(object):
             final+=word_list[i:i+ngram]
 
         return final
+
+
+class QueryParser(object):
+    def __init__(self):
+        pass
+
+    def is_date(self, query):
+        assert isinstance(query, str), 'the query is not a string'
+        pass
+
+    def is_hastag(self, query):
+        assert isinstance(query, str), 'the query is not a string'
+        pass
+
+    def is_tweet_term(self, query):
+        assert isinstance(query, str), 'the query is not a string'
+        pass
+
+    def parse_query(self, query):
+        assert isinstance(query, str), 'the query is not a string'
+        pass
+
+
+class IndexSearcher(object):
+    def __init__(self, index_name=None):
+        assert index_name in ['tweet_index', 'tag_index']
+
+        if index_name:
+            path = os.path.join(settings.STORAGE_DIR, index_name)
+            backup_index = os.path.join(settings.BACKUP_DIR, index_name)
+
+            if os.path.exists(path):
+                self.indexer = IndexManager()
+                self.indexer.open_index(index_name)
+
+            elif os.path.exists(backup_index):
+                self.indexer = IndexManager()
+                self.indexer.open_index(index_name)
+
+            else:
+                raise AssertionError('index does not exist')
+        else:
+            self.indexer = None
+
+        self.query_parser = QueryParser()
+
+    def search_index(self, query):
+        assert isinstance(query, str), 'the query is not a string'
+
+        # is it a hashtag
+        # is it a date
+        # is a word or words
+        pass
+
+
+

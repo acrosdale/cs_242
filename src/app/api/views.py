@@ -6,6 +6,7 @@ from app.twit.utils import GetMongo_client
 from django.conf import settings
 import os
 
+
 class TestApi(APIView):
 	help = 'this api will enable user to search the tweet param of the tweet index'
 

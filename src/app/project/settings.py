@@ -29,6 +29,7 @@ DOTENV_PATH = os.path.join(ROOT_DIR, "dev.env")
 
 STATIC_DIR = os.path.join(RUNTIME_DIR, 'static')
 STORAGE_DIR = os.path.join(RESOURCES_DIR, 'storage')
+BACKUP_DIR = os.path.join(RESOURCES_DIR, 'storage/aux')
 NFS_DIR = os.path.join(STORAGE_DIR, 'nfs/django')
 LOGGING_DIR = os.path.join(RESOURCES_DIR, 'logs')
 

@@ -1,0 +1,285 @@
+/* Mobile-first CSS, with media queries for larger viewports */
+
+* {
+  font-family: sans-serif;
+  --color-background: white;
+  --color-foreground: #666;
+  --color-foreground-highlight: black;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  align-items: center;
+  background: #eee;
+  display: grid;
+  justify-items: center;
+  margin: 0;
+}
+
+header {
+  background-color: var(--color-background);
+  display: grid;
+  grid-template-columns: 100px auto 70px;
+  padding: 20px 20px;
+  width: calc(100% - 40px);
+}
+
+header h1 {
+  color: #26882e;
+  font-size: 16px;
+}
+
+form#search {
+  align-items: center;
+  display: flex;
+}
+
+form#search label {
+  display: none;
+  font-weight: 500;
+  margin: 0 10px 0 0;
+}
+
+form#search input {
+  border: solid #ccc;
+  border-width: 1px 0 1px 1px;
+  border-radius: 2px 0 0 2px;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 200;
+  height: 33px;
+  margin: 0;
+  min-width: 90px;
+  padding: 5px;
+  -webkit-appearance: textfield;
+}
+
+form#search button {
+  border: none;
+  cursor: pointer;
+  height: 33px;
+  padding: 0;
+}
+
+form#search svg {
+  background-color: #26882e;
+  border-radius: 0 2px 2px 0;
+  fill: white;
+  height: 33px;
+  min-width: 24px;
+  padding: 0 7px;
+  width: 24px;
+}
+
+form#search svg:hover {
+  background-color: #1d6823;
+  fill: white;
+}
+
+a#shopping-cart {
+  position: relative;
+}
+
+a#shopping-cart::after {
+  color: black;
+  content: attr(data-badge);
+  font-size: 12px;
+  font-weight: bold;
+  left: 36px;
+  position: absolute;
+  text-align: center;
+  top: -1px;
+  width: 18px;
+}
+
+a#shopping-cart[data-badge='']::after,
+a#shopping-cart[data-badge='0']::after {
+  display: none;
+}
+
+a#shopping-cart svg {
+  fill: var(--color-foreground);
+  height: 32px;
+  position: relative;
+  top: 2px;
+  width: 125px;
+}
+
+a#shopping-cart svg:hover {
+  fill: var(--color-foreground-highlight);
+}
+
+a#shopping-cart svg text {
+  display: none;
+  font-size: 12px;
+}
+
+
+@media all and (min-width: 750px) {
+  header {
+    align-items: center;
+    background-color: var(--color-background);
+    grid-template-columns: 200px auto 160px;
+    padding: 40px;
+    width: calc(100% - 80px);
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  form#search label {
+    display: inline;
+  }  
+
+  form#search input::placeholder {
+    opacity: 0;
+  }
+
+  a#shopping-cart {
+    justify-self: end;
+    width: 100px;
+  }
+  a#shopping-cart svg text {
+    display: inherit;
+  }
+}
+
+
+
+
+
+
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+body {
+  color: #404040;
+  font-family: 'Lucida Grande', Verdana, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 20px;
+  background: #3b3f46;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 90px 0;
+  width: 400px;
+  background-color: false;
+  background-image: -webkit-gradient(radial, center center, 0, center center, 460, color-stop(0%, rgba(255, 255, 255, 0.1)), color-stop(100%, transparent));
+  background-image: -webkit-radial-gradient(center, cover, rgba(255, 255, 255, 0.1), transparent);
+  background-image: -moz-radial-gradient(center, cover, rgba(255, 255, 255, 0.1), transparent);
+  background-image: -ms-radial-gradient(center, cover, rgba(255, 255, 255, 0.1), transparent);
+  background-image: -o-radial-gradient(center, cover, rgba(255, 255, 255, 0.1), transparent);
+  background-image: radial-gradient(center, cover, rgba(255, 255, 255, 0.1), transparent);
+}
+
+
+.switch {
+  position: relative;
+  height: 26px;
+  width: 120px;
+  margin: 20px auto;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.switch-label {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 58px;
+  line-height: 26px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+.switch-label:active {
+  font-weight: bold;
+}
+
+.switch-label-off {
+  padding-left: 2px;
+}
+
+.switch-label-on {
+  padding-right: 2px;
+}
+
+
+.switch-input {
+  display: none;
+}
+.switch-input:checked + .switch-label {
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+  -webkit-transition: 0.15s ease-out;
+  -moz-transition: 0.15s ease-out;
+  -ms-transition: 0.15s ease-out;
+  -o-transition: 0.15s ease-out;
+  transition: 0.15s ease-out;
+  -webkit-transition-property: color, text-shadow;
+  -moz-transition-property: color, text-shadow;
+  -ms-transition-property: color, text-shadow;
+  -o-transition-property: color, text-shadow;
+  transition-property: color, text-shadow;
+}
+.switch-input:checked + .switch-label-on ~ .switch-selection {
+  left: 60px;
+  /* Note: left: 50%; doesn't transition in WebKit */
+}
+
+.switch-selection {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 2px;
+  display: block;
+  width: 58px;
+  height: 22px;
+  border-radius: 3px;
+  background-color: #65bd63;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9dd993), color-stop(100%, #65bd63));
+  background-image: -webkit-linear-gradient(top, #9dd993, #65bd63);
+  background-image: -moz-linear-gradient(top, #9dd993, #65bd63);
+  background-image: -ms-linear-gradient(top, #9dd993, #65bd63);
+  background-image: -o-linear-gradient(top, #9dd993, #65bd63);
+  background-image: linear-gradient(top, #9dd993, #65bd63);
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  -webkit-transition: left 0.15s ease-out;
+  -moz-transition: left 0.15s ease-out;
+  -ms-transition: left 0.15s ease-out;
+  -o-transition: left 0.15s ease-out;
+  transition: left 0.15s ease-out;
+}
+
+.switch-yellow .switch-selection {
+  background-color: #c4bb61;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e0dd94), color-stop(100%, #c4bb61));
+  background-image: -webkit-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: -moz-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: -ms-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: -o-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: linear-gradient(top, #e0dd94, #c4bb61);
+}
+
+

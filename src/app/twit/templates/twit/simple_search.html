@@ -1,0 +1,59 @@
+{% load static %}
+<html>
+<head>
+	<title>Search</title>
+	<meta charset="utf-8" />
+
+    <!--leaflet-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+	<!--ajax-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!--css-->
+    <link rel="stylesheet" href="{% static 'twit/css/twit.css' %}" />
+</head>
+
+<header>
+  <h1>A.I.R Engine</h1>
+  <form autocomplete="on" id="search" class="search-bar" method="POST">
+    <label for="search-input">Search:</label>
+    <input id="search-input" minlength="3" name="query" placeholder="Search" role="search" type="search">
+    <button aria-label="submit" type="submit">
+      <svg viewbox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        <path d="M0 0h24v24H0z" fill="none" />
+      </svg>
+    </button>
+  </form>
+
+    <div class="switch switch-blue">
+      <input type="radio" class="switch-input" name="view2" value="week2" id="week2" checked>
+      <label for="week2" class="switch-label switch-label-off">Lucene</label>
+      <input type="radio" class="switch-input" name="view2" value="month2" id="month2">
+      <label for="month2" class="switch-label switch-label-on">hadoop</label>
+      <span class="switch-selection"></span>
+    </div>
+
+</header>
+<body>
+
+<div id="mapid" style="width: 75%; height: 600px;top:20px"></div>
+
+</body>
+
+<!--map js files-->
+<script src="{% static 'twit/js/map.js' %}"></script>
+
+<!--search js files-->
+<script src="{% static 'twit/js/search.js' %}"></script>
+
+</html>
+
+
+
+
+

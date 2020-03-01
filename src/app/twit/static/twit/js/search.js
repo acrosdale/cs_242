@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  $("button").click(function(){
+   /*$("button").click(function(){
     $.ajax({
         url: "demo_test.txt",
         success: function(result){
@@ -8,6 +8,18 @@ $(document).ready(function(){
         }
     });
 
+  });*/
+
+  $('.switch-input').click(function(){
+
+    console.log($(this).val());
   });
+
+  $('.search-bar').click(function(e){
+        e.preventDefault();
+        console.log('form stopped');
+  });
+
+
 
 });

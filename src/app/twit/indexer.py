@@ -85,7 +85,7 @@ class IndexManager(object):
                 score_time=0
             else:
                time=time.split()[1:]
-               state_counts=user_dict.get("statuses_count",1)
+               state_counts=user_dict.get("statuses_count",2)
 
                currentDT = datetime.datetime.now()
                currentDT=str(currentDT).split()

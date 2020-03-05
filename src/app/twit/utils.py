@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from dateutil import parser
 import json
 from bson.objectid import ObjectId
-
+from bson.json_util import loads
 
 def GetMongo_client(collection_name='django'):
     client = MongoClient(settings.MONGO_URI)
@@ -20,16 +20,11 @@ def loadJsonInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standar
     with open(filepath) as f:
         for line in f:
             try:
-                data = json.loads(line)
-
-                if data.get('_id'):
-                    _id = data.get('_id')
-                    if _id.get('$oid'):
-                        data['_id'] = ObjectId(data['_id']['$oid'])
-                    # dupes are ignored
+                data = loads(line)
                 db.twit_tweet.insert_one(data)
-            except:
-                pass
+            except Exception as e:
+                print(e)
+                break
 
     # df = pd.read_json(filePath, orient='columns')
     # records_ = df

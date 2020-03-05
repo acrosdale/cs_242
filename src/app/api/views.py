@@ -1,11 +1,13 @@
 import os
-
+import json
+from lupyne import engine
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 
 from app.twit.indexer import IndexManager
 from app.twit.utils import GetMongo_client
+from bson.objectid import ObjectId
 
 
 class TestApi(APIView):
@@ -33,7 +35,7 @@ class TestApi(APIView):
 
 				db = GetMongo_client()
 
-				query_data = db.twit_tweet.find_one({'id_str': id_str})
+				query_data = db.twit_tweet.find_one({'_id': ObjectId(id_str)})
 
 				if query_data:
 					response.data['first_match_tweet'] = query_data.get('text')
@@ -50,7 +52,62 @@ class SearchLuceneTweets(APIView):
 
 	def get(self, request):
 
+		query = request.GET.get('query', None)
 		response = Response(data={})
+		if query is None:
+			return response
+
+		q_obj = engine.Query
+		q_list = list()
+
+		# split on spaces
+		query_components = query.split()
+
+		# build query obj
+		for field in ['tweet', 'descrpt', 'screen_name']:
+			q_list.append(q_obj.term(field, query))
+
+			if len(query_components) > 1:
+				for comp in query_components:
+					# do or OP
+					q_list.append(q_obj.term(field, comp))
+		# join queries
+		is_first = True
+		q_merged = None
+		for q in q_list:
+			if is_first:
+				q_merged = q
+				is_first = False
+			else:
+				q_merged |= q
+
+		# open tweet index
+		path = os.path.join(settings.STORAGE_DIR, 'tweet_index')
+		if os.path.exists(path):
+			index = IndexManager()
+			index.open_index('tweet_index')
+			if index.indexer:
+				hits = index.indexer.search(q_merged)
+
+				docids = list()
+				# build return data
+				# todo get top k match and sort by rank for lookup
+				for hit in hits:
+					docids.append(ObjectId(hit.dict()['docid']))
+
+				# query data
+				db = GetMongo_client()
+				query_data = db.twit_tweet.find(
+					{'_id': {'$in': docids}},
+					{'_id': False, 'user.screen_name': True, 'text': True,  'coordinates': True}
+				)
+				response.data['bit_ops'] = str(q_list)
+				response.data['query'] = str(q_merged)
+				# we limit as the result can be too much
+				response.data['results'] = list(query_data)
+
+			index.close_index()
+		return response
 
 
 class SearchLuceneTags(APIView):

@@ -15,34 +15,52 @@
 
     <!--css-->
     <link rel="stylesheet" href="{% static 'twit/css/twit.css' %}" />
+
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
 <header>
-  <h1>A.I.R Engine</h1>
+  <h1 style="margin-top: -1%">A.I.R Engine</h1>
   <form autocomplete="on" id="search" class="search-bar" method="POST">
-    <label for="search-input">Search:</label>
-    <input id="search-input" minlength="3" name="query" placeholder="Search" role="search" type="search">
+    <input id="search-input" minlength="3"  name="query" placeholder="Search" role="search" type="search">
     <button aria-label="submit" type="submit">
       <svg viewbox="0 0 24 24">
         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         <path d="M0 0h24v24H0z" fill="none" />
       </svg>
     </button>
+      <button class="adv-search" style="width:40px; height:33px;display: inline-block; margin:5px; background-color: #24a0ed"><i class="fa fa-search-plus" style="font-size:18px;"></i></button>
   </form>
 
-    <div class="switch switch-blue">
-      <input type="radio" class="switch-input" name="view2" value="week2" id="week2" checked>
-      <label for="week2" class="switch-label switch-label-off">Lucene</label>
-      <input type="radio" class="switch-input" name="view2" value="month2" id="month2">
-      <label for="month2" class="switch-label switch-label-on">hadoop</label>
+    <div class="switch switch-blue" style="margin-top: 6%">
+
+      <input type="radio" class="switch-input" name="view2" value="Lucene" id="Lucene" checked>
+      <label for="Lucene" class="switch-label switch-label-off">Lucene</label>
+      <input type="radio" class="switch-input" name="view2" value="hadoop" id="hadoop">
+      <label for="hadoop" class="switch-label switch-label-on">hadoop</label>
       <span class="switch-selection"></span>
     </div>
+
+
 
 </header>
 <body>
 
 <div id="mapid" style="width: 80%; height: calc(100vh - 250px); top: 50px"></div>
+<!-- Trigger/Open The Modal -->
+<button id="myBtn" style="visibility : hidden">Open Modal</button>
 
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+  </div>
+
+</div>
 </body>
 
 <!--map js files-->

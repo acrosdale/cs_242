@@ -5,6 +5,7 @@ from django.conf import settings
 from dateutil import parser
 import shutil
 import datetime
+from geopy.geocoders import Nominatim
 
 import re
 
@@ -60,6 +61,7 @@ class IndexManager(object):
             self.indexer.set('rank', dimensions=1, stored=True)
             self.indexer.set('tweet', engine.Field.Text)
             self.indexer.set('descrpt', engine.Field.Text)
+            # this lat and long tuple
             self.indexer.set('coord', engine.SpatialField)
             self.indexer.set('screen_name', engine.Field.Text)
             self.indexer.fields['loctn'] = engine.NestedField('state.city')
@@ -72,10 +74,11 @@ class IndexManager(object):
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'
 
+        count = 0
         for obj in queryset_cursor:
-            doc_id = str(obj.get('id'))
+            doc_id = str(obj.get('_id'))
             tweet = obj.get('text', None)
-            date_created = parser.parse(obj.get('created_at'))
+            date_created = obj.get('created_at')
             date_created = datetime.date(date_created.year, date_created.month, date_created.day)
 
             # removes emoji
@@ -101,7 +104,10 @@ class IndexManager(object):
             if coord_obj:
                 coord = coord_obj.get('coordinates', None)
                 if coord:
-                    coord = [tuple(coord)]
+                    print(coord[0], coord[1])
+                    coord = [(float(coord[0]), float(coord[1]))]
+                    count +=1
+
             else:
                 coord = []
 
@@ -115,6 +121,7 @@ class IndexManager(object):
             else:
                 loctn = ''
             try:
+
                 self.indexer.add(
                     docid=doc_id,
                     tweet=tweet,
@@ -126,9 +133,10 @@ class IndexManager(object):
                     rank=self.get_rank(obj)
                 )
             except Exception as e:
-                print(str(e))
+                print('error', str(e))
 
         self.index_commit()
+        print(count)
 
     def index_hashtags(self, queryset_cursor,ngram=0):
         assert self.indexer is not None
@@ -147,9 +155,9 @@ class IndexManager(object):
         # tuple_list=[]
         for obj in queryset_cursor:
 
-            docid = str(obj.get('id'))
+            docid = str(obj.get('_id'))
             hashtags_obj = obj.get('entities', None)
-            date_created = parser.parse(obj.get('created_at'))
+            date_created = obj.get('created_at')
             date_created = datetime.date(date_created.year, date_created.month, date_created.day)
 
             # skip id no tag are found

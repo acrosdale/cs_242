@@ -29,6 +29,9 @@ class Command(BaseCommand):
 
             except Exception as e:
                 print('could not load json file error %s' % str(e))
+        else:
+            print('LOADING DEAFULT')
+            loadJsonInMongo()
 
 
 

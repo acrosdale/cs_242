@@ -22,5 +22,6 @@ from . import views
 urlpatterns = [
 
     path('test/', views.TestApi.as_view()),
+    path('lucene/', views.SearchLuceneTweets.as_view()),
 ]
 

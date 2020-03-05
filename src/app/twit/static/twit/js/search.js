@@ -8,6 +8,18 @@ $(document).ready(function(){
     // The api back to use
     var engine = 'Lucene';
 
+    $('.adv-modal-submit').click(function(e){
+
+        /*this is to pop advance search modal*/
+         e.preventDefault();
+         engine = 'Lucene';
+         console.log('an advance search was made')
+
+         modal.style.display = "none";
+      $('#mapid').css( "display","block" );
+
+    });
+
 
     $('.adv-search').click(function(e){
 
@@ -16,6 +28,7 @@ $(document).ready(function(){
 
         console.log('this is advance search. pop modal');
          $('#mapid').css( "display","none" );
+         $('.date-inp-range-adv').daterangepicker();
         modal.style.display = "block";
 
     });
@@ -32,7 +45,6 @@ $(document).ready(function(){
         if(engine == 'Lucene'){
             console.log($('#search-input').val())
             searchLuceneBasic($('#search-input').val())
-
         }
     });
 
@@ -51,7 +63,6 @@ $(document).ready(function(){
     }
 
     function searchLuceneBasic(query_str){
-
         var url = "/api/lucene/?query="+ query_str
 
         $.ajax({

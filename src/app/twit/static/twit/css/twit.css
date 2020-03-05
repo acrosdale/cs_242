@@ -303,7 +303,8 @@ body {
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: 50%;
+  height: 55%;
 }
 
 /* The Close Button */
@@ -319,4 +320,31 @@ body {
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+.model-adv-submit{
+    float: right;
+    margin-top: 30%;
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+
+.btncls{
+    background-color:#008CBA;
+    border: #2e6da4;
+    font-size: 15px;
+    float: right;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 4px;
+    line-height: 1.5;
+    text-decoration:none
 }

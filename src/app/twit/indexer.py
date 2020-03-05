@@ -61,7 +61,7 @@ class IndexManager(object):
             self.indexer.set('rank', dimensions=1, stored=True)
             self.indexer.set('tweet', engine.Field.Text)
             self.indexer.set('descrpt', engine.Field.Text)
-            # this lat and long tuple
+            # this long and lat tuple
             self.indexer.set('coord', engine.SpatialField)
             self.indexer.set('screen_name', engine.Field.Text)
             self.indexer.fields['loctn'] = engine.NestedField('state.city')

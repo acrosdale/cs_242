@@ -212,6 +212,12 @@ TWITTER_CREDS = [
         'CONSUMER_SECRET': 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt',
         'ACCESS_TOKEN': '1217817849827213317-50bABazFrgYVIFHEkAKc7G5ucuv5Vv',
         'ACCESS_SECRET': 'CLxk6nm6iCC2jJ6obDnBh87vXflgu80YtDeYfa6h6lV19'
+    },
+{
+        'CONSUMER_KEY': 'Omm9dSSdTOFA0FUmOYSPAvMTe',
+        'CONSUMER_SECRET': 'ZqAe063JLbFUuflSE0xig8nB0HsYfA7iviKCrcJRai4RZab6lt',
+        'ACCESS_TOKEN': '1217817849827213317-50bABazFrgYVIFHEkAKc7G5ucuv5Vv',
+        'ACCESS_SECRET': 'CLxk6nm6iCC2jJ6obDnBh87vXflgu80YtDeYfa6h6lV19'
     }
 ]
 
@@ -227,7 +233,15 @@ TWEET_TRACKS = [
     'Cardi B',
     'Beyoncé',
     'Park Ji-min',
-    'Nicki Minaj'
+    'Nicki Minaj',
+    'Trump',
+    'Donald',
+    'Outbreak',
+    'Virus',
+    'COVID-19',
+    'coronavirus emergency',
+    'coronavirus',
+    'Los Angeles'
 ]
 EMOJI_PATTERN = re.compile("["
                 u"\U0001F600-\U0001F64F"  # emoticons

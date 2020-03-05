@@ -69,6 +69,12 @@ class IndexManager(object):
 
     def get_rank(self, tweet):
         assert isinstance(tweet, dict)
+        
+        for obj,v_obj in tweet.items():
+            user_dict=obj.get('user', None)
+            for user_key,user_v user_dict.items():
+                pass
+            
         return 1.0
 
     def index_tweets(self, queryset_cursor):

@@ -72,7 +72,9 @@ class IndexManager(object):
         
         for obj,v_obj in tweet.items():
             user_dict=obj.get('user', None)
-            for user_key,user_v user_dict.items():
+            if not user_dict:
+                return 0
+            for user_key,user_v in user_dict.items():
                 pass
             
         return 1.0

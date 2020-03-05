@@ -6,7 +6,8 @@ from dateutil import parser
 import shutil
 import datetime
 from geopy.geocoders import Nominatim
-
+import datetime
+import numpy as np
 import re
 
 
@@ -74,10 +75,58 @@ class IndexManager(object):
             user_dict=obj.get('user', None)
             if not user_dict:
                 return 0
-            for user_key,user_v in user_dict.items():
-                pass
             
-        return 1.0
+            #time
+            
+            
+            
+            time=user_dict.get("created_at",None)
+            if not time:
+                score_time=0
+            else:
+               time=time.split()[1:]
+               state_counts=user_dict.get("statuses_count",1)
+
+               currentDT = datetime.datetime.now()
+               currentDT=str(currentDT).split()
+               y,m,d=currentDT[0].split('-')
+               hour,mini,_=currentDT[1].split(':')
+
+               monthToNum={'Jan' : 1,
+                        'Feb' : 2,
+                        'Mar' : 3,
+                        'Apr' : 4,
+                        'May' : 5,
+                        'Jun' : 6,
+                        'Jul' : 7,
+                        'Aug' : 8,
+                        'Sep' : 9, 
+                        'Oct' : 10,
+                        'Nov' : 11,
+                        'Dec' : 12}
+
+               y=abs(int(time[-1])-int(y))
+               m=abs(monthToNum[time[0]]-int(m))
+               d=abs(int(time[1])-int(d))
+               h=abs(int(time[2].split(":")[0])-int(hour))
+               mini=abs(int(time[2].split(":")[1])-int(mini))
+               score_time=-np.log2((y*12*30*24*60+m*30*24*60)*1/state_counts+(d*24*60+h*60+mini)*(1-1/state_counts))
+
+            
+               #friendship connection
+               followers_count=user_dict.get("followers_count",None)
+               friends_count=user_dict.get("friends_count",None)
+               if not followers_count or not friends_count:
+                    score_connection=0
+               else:
+                    score_connection=1/2*(np.log10(followers_count)*friends_count+np.log10(friends_count)*followers_count)
+               
+               
+            
+           
+                
+            
+            return 1.0
 
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'

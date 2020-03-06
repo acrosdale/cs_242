@@ -119,7 +119,8 @@ class IndexManager(object):
                if not followers_count or not friends_count:
                     score_connection=0
                else:
-                    score_connection=1/2*(np.log10(followers_count)*friends_count+np.log10(friends_count)*followers_count)
+                    diff_rate=followers_count/followers_count-friends_count
+                    score_connection=np.log2(followers_count)+diff_rate*np.log(friends_count)
                
                
             

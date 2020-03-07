@@ -2,6 +2,9 @@ import os
 import json
 import datetime
 from lupyne import engine
+import logging
+import urllib
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
@@ -11,6 +14,7 @@ from app.twit.utils import GetMongo_client
 from bson.objectid import ObjectId
 from app.twit.utils import merge_result
 
+logger = logging.getLogger(__name__)
 
 class TestApi(APIView):
 	help = 'this api will enable user to search the tweet param of the tweet index'
@@ -280,8 +284,64 @@ class SearchLuceneTweetsAdvance(APIView):
 
 
 class SearchHadoopIndex(APIView):
-	help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
+        help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
 
-	def get(self, request):
-		param = 'johncena'
-		response = Response(data={})
+        def get(self, request):
+                query = request.GET.get('query', None)
+                response = Response(data={})
+                if query is None:
+                    return response
+
+                logger.warning('query='+keyword)
+                db = GetMongo_client()
+
+                doc_list = dict()
+                for word in query.split(''):
+                    query_data = db.ranked_index.find({word: {'$exists': True}})
+                    if len(doc_list) > 0:
+                        tmp_list = dict()
+                        for x in query_data.get(word):
+                            if x.get('tweet-id') in doc_list:
+                                tmp_list[x['tweet-id']] = doc_list[x['tweet-id']]+x.get('rank')
+
+                        doc_list = tmp_list
+                            
+                    else:
+                        for x in query_data.get(word, ''):
+                            if isinstance(x.get('tweet-id', ''), int) and isinstance(x.get('rank', ''), float):
+                                doc_list[x['tweet-id']] = x['rank']
+
+                doc_list = sorted(doc_list.items(), key=lambda v: v[1])
+                query_data = db.twit_tweet.find(
+                    {'_id': {'$in': doc_list.keys()}},
+                    {'_id': False, 'user.screen_name': True, 'text': True, 'geo.coordinates': True}
+                )
+                response.data['result'] = list(query_data)
+                return response
+
+# >>> ind.indexer.search(q).count
+# 1008
+# >>> q =engine.Query.ranges('date',[1.4778368E9 ,1.5005151999999998E9])
+# >>> ind.indexer.search(q).count
+# 0
+# >>>
+# >>>
+# >>>
+# >>> d2 = datetime.date(2020, 2, 1)
+# >>> d = datetime.date(2020, 1, 1)
+# >>> q=engine.DateTimeField('date').range(d,d2)
+# >>> ind.indexer.search(q).count
+# 0
+# >>> ind.close_index()
+# True
+# >>> ind.open_index('tweet_index')
+# >>> ind.indexer.search(q).count
+# 1
+# >>> hits =ind.indexer.search(q)
+# >>> hits
+# <lupyne.engine.documents.Hits object at 0x7f6b0d7e39d0>
+# >>> hits.dict()
+# Traceback (most recent call last):
+#   File "<console>", line 1, in <module>
+# AttributeError: 'Hits' object has no attribute 'dict'
+# >>> hits[0].dict()

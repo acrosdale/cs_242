@@ -1,11 +1,33 @@
 var mymap = L.map('mapid').setView([51.505, -0.09], 13);
-
+var twitterIcon = L.icon({iconUrl:'https://cdn2.iconfinder.com/data/icons/minimalism/128/twitter.png', iconSize: [64, 64]});
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1
+	maxZoom: 18,
+	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+		'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+		'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	id: 'mapbox/streets-v11',
+	tileSize: 512,
+	zoomOffset: -1
 }).addTo(mymap);
+
+function showResultOnMap(result) {
+	if (result.length > 0) {
+		$.parseJSON(result).forEach(point => {
+			if (point.coordinates != null) {
+				L.marker(point.coordinates, {icon: twitterIcon}).addTo(mymap)
+					.bindPopup(point.Text);
+			}
+		});
+	}
+}
+
+function searchHadoopBasic(query_str) {
+	$.ajax({
+		url: '/api/hadoop/?query=' + query_str,
+		type: 'GET',
+		success: function(data) {
+			console.log(data['result']);
+			showResultOnMap(data['result']);
+		}
+	});
+}

@@ -69,8 +69,9 @@ $(document).ready(function(){
             url: url,
             type:'GET',
             success: function(data){
-               console.log(data['results']);
+               console.log(data);
                //call map here to generate tweet with cooardinates
+			   showResultOnMap(data);
             }
         });
     }

@@ -1,6 +1,9 @@
 import os
 import json
 from lupyne import engine
+import logging
+import urllib
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
@@ -9,6 +12,7 @@ from app.twit.indexer import IndexManager
 from app.twit.utils import GetMongo_client
 from bson.objectid import ObjectId
 
+logger = logging.getLogger(__name__)
 
 class TestApi(APIView):
 	help = 'this api will enable user to search the tweet param of the tweet index'
@@ -99,7 +103,7 @@ class SearchLuceneTweets(APIView):
 				db = GetMongo_client()
 				query_data = db.twit_tweet.find(
 					{'_id': {'$in': docids}},
-					{'_id': False, 'user.screen_name': True, 'text': True,  'coordinates': True}
+					{'_id': False, 'user.screen_name': True, 'text': True,  'geo.coordinates': True}
 				)
 				response.data['bit_ops'] = str(q_list)
 				response.data['query'] = str(q_merged)
@@ -107,6 +111,16 @@ class SearchLuceneTweets(APIView):
 				response.data['results'] = list(query_data)
 
 			index.close_index()
+
+
+		docids = ["5e60819933817e22c1f0aafd", '5e60819e33817e22c1f0ab01']
+		db = GetMongo_client()
+		query_data = db.twit_tweet.find(
+		    {'_id': {'$in': docids}},
+		    {'_id': False, 'user.screen_name': True, 'text': True,  'geo.coordinates': True}
+		)
+		response.data['results'] = list(query_data)
+		print(response)
 		return response
 
 
@@ -130,13 +144,40 @@ class SearchLuceneTags(APIView):
 
 
 class SearchHadoopIndex(APIView):
-	help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
+        help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
 
-	def get(self, request):
-		param = 'johncena'
-		response = Response(data={})
+        def get(self, request):
+                query = request.GET.get('query', None)
+                response = Response(data={})
+                if query is None:
+                    return response
 
+                logger.warning('query='+keyword)
+                db = GetMongo_client()
 
+                doc_list = dict()
+                for word in query.split(''):
+                    query_data = db.ranked_index.find({word: {'$exists': True}})
+                    if len(doc_list) > 0:
+                        tmp_list = dict()
+                        for x in query_data.get(word):
+                            if x.get('tweet-id') in doc_list:
+                                tmp_list[x['tweet-id']] = doc_list[x['tweet-id']]+x.get('rank')
+
+                        doc_list = tmp_list
+                            
+                    else:
+                        for x in query_data.get(word, ''):
+                            if isinstance(x.get('tweet-id', ''), int) and isinstance(x.get('rank', ''), float):
+                                doc_list[x['tweet-id']] = x['rank']
+
+                doc_list = sorted(doc_list.items(), key=lambda v: v[1])
+                query_data = db.twit_tweet.find(
+                    {'_id': {'$in': doc_list.keys()}},
+                    {'_id': False, 'user.screen_name': True, 'text': True, 'geo.coordinates': True}
+                )
+                response.data['result'] = list(query_data)
+                return response
 
 # >>> ind.indexer.search(q).count
 # 1008

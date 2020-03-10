@@ -132,7 +132,7 @@ class IndexManager(object):
                        normalized_diff=-len(str(diff_rate)[1:])*int(str(diff_rate)[1])
                     #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
                     #if diff_rate!=0:
-                    score_connection=np.log2(followers_count+1)*(normalized_diff+1) #avoid is 0 so add 1 to normalized_diff
+                    score_connection=np.log2(followers_count+1)*(normalized_diff) 
                     
             
            

@@ -111,7 +111,7 @@ class IndexManager(object):
                h=abs(int(time[2].split(":")[0])-int(hour))
                mini=abs(int(time[2].split(":")[1])-int(mini))
                if y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini==0:
-                  score_tim=10
+                  score_time=10
                else:
                   score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
 
@@ -131,13 +131,13 @@ class IndexManager(object):
                     #if diff_rate!=0:
                     score_connection=np.log2(followers_count)*(normalized_diff)
                     
-                    if score_tim==10:
-                        score_tim=np.log2(followers_count)
+                    if score_time==10:
+                        score_time=np.log2(followers_count)
             
            
                 
             
-            return 1.0
+            return score_connection+score_time
 
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'

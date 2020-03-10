@@ -110,7 +110,7 @@ class IndexManager(object):
                d=abs(int(time[1])-int(d))
                h=abs(int(time[2].split(":")[0])-int(hour))
                mini=abs(int(time[2].split(":")[1])-int(mini))
-               score_time=-np.log2((y*12*30*24*60+m*30*24*60)*1/state_counts+(d*24*60+h*60+mini)*(1-1/state_counts))
+               score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
 
             
                #friendship connection

@@ -123,9 +123,13 @@ class IndexManager(object):
                     score_connection=0
                else:
                     diff_rate=followers_count-friends_count
+                    if diff_rate>=0:
+                       normalized_diff=len(str(diff_rate))*int(str(diff_rate)[:1])
+                    else:
+                       normalized_diff=-len(str(diff_rate[1:]))*int(str(diff_rate)[1])
                     #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
                     #if diff_rate!=0:
-                    score_connection=np.log2(followers_count)*(diff_rate)
+                    score_connection=np.log2(followers_count)*(normalized_diff)
                     
                     if score_tim==10:
                         score_tim=np.log2(followers_count)

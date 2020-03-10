@@ -113,7 +113,10 @@ class IndexManager(object):
                if y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini==0:
                   score_time=10
                else:
-                  score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
+                  if state_counts==0:
+                      score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*1
+                  else:
+                      score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
 
             
                #friendship connection
@@ -129,15 +132,27 @@ class IndexManager(object):
                        normalized_diff=-len(str(diff_rate)[1:])*int(str(diff_rate)[1])
                     #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
                     #if diff_rate!=0:
-                    score_connection=np.log2(followers_count)*(normalized_diff)
+                    score_connection=np.log2(followers_count+1)*(normalized_diff)
                     
                     if score_time==10:
-                        score_time=np.log2(followers_count)
+                        score_time=np.log2(followers_count+1)
             
            
-                
+            protected=user_dict.get("protected",'NULL')
+            verified=user_dict.get("verified",'NULL')
+            favourites_count=user_dict.get("favourites_count",None)
             
-            return score_connection+score_time
+            if protected=='NULL':
+                protected=0
+            if verified=='NULL':
+                verified=0
+            if not favourites_count:
+                favourites_count=0
+            
+            
+            final_score=(score_connection+score_time+np.log2(favourites_count+1)*(1+protected+verified))
+             
+            return final_score
 
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'

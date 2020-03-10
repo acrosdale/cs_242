@@ -110,13 +110,16 @@ class IndexManager(object):
                d=abs(int(time[1])-int(d))
                h=abs(int(time[2].split(":")[0])-int(hour))
                mini=abs(int(time[2].split(":")[1])-int(mini))
-               score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
+               if y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini==0:
+                  score_tim=10
+               else:
+                  score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
 
             
                #friendship connection
                followers_count=user_dict.get("followers_count",None)
                friends_count=user_dict.get("friends_count",None)
-               if not followers_count or not friends_count:
+               if not followers_count or not friends_count or followers_count==0:
                     score_connection=0
                else:
                     diff_rate=followers_count-friends_count
@@ -124,6 +127,8 @@ class IndexManager(object):
                     #if diff_rate!=0:
                     score_connection=np.log2(followers_count)*(diff_rate)
                     
+                    if score_tim==10:
+                        score_tim=np.log2(followers_count)
             
            
                 

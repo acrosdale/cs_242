@@ -121,9 +121,9 @@ class IndexManager(object):
                else:
                     diff_rate=followers_count-friends_count
                     #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
-                    score_connection=np.log2(followers_count)*(1-1/diff_rate)
-               
-               
+                    #if diff_rate!=0:
+                    score_connection=np.log2(followers_count)*(diff_rate)
+                    
             
            
                 

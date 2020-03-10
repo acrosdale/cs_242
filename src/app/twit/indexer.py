@@ -134,8 +134,6 @@ class IndexManager(object):
                     #if diff_rate!=0:
                     score_connection=np.log2(followers_count+1)*(normalized_diff)
                     
-                    if score_time==10:
-                        score_time=np.log2(followers_count+1)
             
            
             protected=user_dict.get("protected",'NULL')

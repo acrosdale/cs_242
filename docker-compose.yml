@@ -15,7 +15,7 @@ services:
 
   mongo-express:
     image: mongo-express
-#    restart: always
+    #    restart: always
     ports:
       - 8081:8081
     depends_on:
@@ -23,9 +23,66 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: pleaseUseAStr0ngPassword
-      ME_CONFIG_MONGODB_SERVER : mongod
+      ME_CONFIG_MONGODB_SERVER: mongod
     networks:
       - db_nw
+
+  namenode:
+    build: docker-hadoop-master/namenode
+    container_name: namenode
+    restart: always
+    ports:
+      - 9870:9870
+      - 9000:9000
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - ./hadoopMR:/home/hadoopMR
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./docker-hadoop-master/hadoop.env
+    networks:
+      - db_nw
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    restart: always
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./docker-hadoop-master/hadoop.env
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
+    env_file:
+      - ./docker-hadoop-master/hadoop.env
+
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
+    env_file:
+      - ./docker-hadoop-master/hadoop.env
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./docker-hadoop-master/hadoop.env
 
   ###############################
   # Built from local Dockerfile #
@@ -44,7 +101,7 @@ services:
 
   web:
     container_name: django_twitter
-    
+
     # Build the Dockerfile in this directory
     build:
       context: .
@@ -77,3 +134,9 @@ networks:
     driver: bridge
   web_nw:
     driver: bridge
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hadoop_historyserver:
+  hadoopMR:

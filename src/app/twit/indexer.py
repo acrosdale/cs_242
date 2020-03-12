@@ -217,7 +217,7 @@ class IndexManager(object):
                     rank = self.get_rank(obj)
                 except:
                     print('ranking had an error. using default')
-                    rank = 1
+                    rank = 0
 
                 self.indexer.add(
                     docid=doc_id,

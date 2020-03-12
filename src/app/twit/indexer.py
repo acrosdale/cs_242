@@ -73,28 +73,27 @@ class IndexManager(object):
     def get_rank(self, tweet):
         assert isinstance(tweet, dict)
         
-        for obj,v_obj in tweet.items():
-            user_dict=obj.get('user', None)
-            if not user_dict:
-                return -(10**10)
-            
-            #time
-            
-            
-            
-            time=user_dict.get("created_at",None)
-            if not time:
-                score_time=0
-            else:
-               time=time.split()[1:]
-               state_counts=user_dict.get("statuses_count",0)
 
-               currentDT = datetime.datetime.now()
-               currentDT=str(currentDT).split()
-               y,m,d=currentDT[0].split('-')
-               hour,mini,_=currentDT[1].split(':')
 
-               monthToNum={'Jan' : 1,
+        user_dict=tweet.get('user', None)
+        #print(user_dict)
+        if not user_dict:
+           return -(10**10)
+
+        #time  
+        time=user_dict.get("created_at",None)
+        if not time:
+           score_time=0
+        else:
+           time=time.split()[1:]
+           state_counts=user_dict.get("statuses_count",0)
+
+           currentDT = datetime.datetime.now()
+           currentDT=str(currentDT).split()
+           y,m,d=currentDT[0].split('-')
+           hour,mini,_=currentDT[1].split(':')
+
+           monthToNum={'Jan' : 1,
                         'Feb' : 2,
                         'Mar' : 3,
                         'Apr' : 4,
@@ -107,55 +106,61 @@ class IndexManager(object):
                         'Nov' : 11,
                         'Dec' : 12}
 
-               y=abs(int(time[-1])-int(y))
-               m=abs(monthToNum[time[0]]-int(m))
-               d=abs(int(time[1])-int(d))
-               h=abs(int(time[2].split(":")[0])-int(hour))
-               mini=abs(int(time[2].split(":")[1])-int(mini))
-               if y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini==0:
+           y=abs(int(time[-1])-int(y))
+           m=abs(monthToNum[time[0]]-int(m))
+           d=abs(int(time[1])-int(d))
+           h=abs(int(time[2].split(":")[0])-int(hour))
+           mini=abs(int(time[2].split(":")[1])-int(mini))
+           if y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini==0:
                   score_time=10
-               else:
+           else:
                   if state_counts==0:
-                      score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*1
+                      score_time=-np.log10(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*1
                   else:
-                      score_time=-np.log2(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
+                      score_time=-np.log10(y*12*30*24*60+m*30*24*60+d*24*60+h*60+mini)*(1-1/state_counts)
 
             
-               #friendship connection
-               followers_count=user_dict.get("followers_count",None)
-               friends_count=user_dict.get("friends_count",None)
-               if not followers_count or not friends_count or followers_count==0:
-                    score_connection=0
-               else:
-                    diff_rate=followers_count-friends_count
-                    if diff_rate>0:
-                       normalized_diff=len(str(diff_rate))*int(str(diff_rate)[:1])
-                    elif diff_rate<0:
-                       normalized_diff=-len(str(diff_rate)[1:])*int(str(diff_rate)[1])
-                    else:
-                       normalized_diff=1
-                    #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
-                    #if diff_rate!=0:
-                    score_connection=np.log2(followers_count+1)*(normalized_diff) 
+        #friendship connection
+        followers_count=user_dict.get("followers_count",None)
+        friends_count=user_dict.get("friends_count",None)
+        if not followers_count or not friends_count or followers_count==0:
+           score_connection=0
+        else:
+           diff_rate=followers_count-friends_count
+           if diff_rate>0:
+              normalized_diff=len(str(diff_rate))*int(str(diff_rate)[:1])
+           elif diff_rate<0:
+              normalized_diff=-len(str(diff_rate)[1:])*int(str(diff_rate)[1])
+           else:
+              normalized_diff=1
+              #interact=2*(friends_count*followers_count)/(followers_count+friends_count)
+              #if diff_rate!=0:
+           score_connection=np.log2(followers_count+1)*(normalized_diff) 
                     
             
-           
-            protected=user_dict.get("protected",'NULL')
-            verified=user_dict.get("verified",'NULL')
-            favourites_count=user_dict.get("favourites_count",None)
+        #social verification
+        protected=user_dict.get("protected",'NULL')
+        verified=user_dict.get("verified",'NULL')
+        favourites_count=user_dict.get("favourites_count",None)
             
-            if protected=='NULL':
-                protected=0
-            if verified=='NULL':
-                verified=0
-            if not favourites_count:
-                favourites_count=0
+        if protected=='NULL':
+             protected=0
+        if verified=='NULL':
+             verified=0
+        if not favourites_count:
+             favourites_count=0
             
             
-            final_score=(score_connection+score_time+np.log2(favourites_count+1)*(1+protected+verified))
-             
-            return final_score
+        final_score=int((score_connection+score_time+np.log2(favourites_count+1)*(1+protected+verified)+6)*100) #one month shift, 10**6
 
+        if final_score<0:
+            final_score=0
+             
+        #print(final_score)
+        return final_score
+
+    
+    
     def index_tweets(self, queryset_cursor):
         assert self.indexer is not None, 'index is not found'
 

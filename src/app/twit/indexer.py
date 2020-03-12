@@ -208,6 +208,11 @@ class IndexManager(object):
                 city = ''
                 state = ''
             try:
+                try:
+                    rank = self.get_rank(obj)
+                except:
+                    print('ranking had an error. using default')
+                    rank = 1
 
                 self.indexer.add(
                     docid=doc_id,
@@ -218,7 +223,7 @@ class IndexManager(object):
                     city=city,
                     state=state,
                     date=date_created,
-                    #rank=self.get_rank(obj)
+                    rank=rank
                 )
             except Exception as e:
                 print('error', str(e))
@@ -279,10 +284,15 @@ class IndexManager(object):
                                    hashtag=self.char_ngram_preprocessing(list(item['text']), ngram)
                                 )
                             else:
+                                try:
+                                    rank = self.get_rank(obj)
+                                except:
+                                    print('ranking had an error using default')
+                                    rank = 1
                                 self.indexer.add(
                                     docid=docid,
                                     hashtag=item['text'],
-                                    #rank=self.get_rank(obj),
+                                    rank=rank,
                                     date=date_created,
                                     city=city,
                                     state=state

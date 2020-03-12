@@ -109,7 +109,7 @@ class SearchLuceneTweets(APIView):
 					response.data['results'] = query_data
 					response.data['total_results'] = len(query_data)
 			except:
-				response.data['total_results'] = []
+				response.data['results'] = []
 			tweet_index.close_index()
 		return response
 
@@ -238,7 +238,7 @@ class SearchLuceneTweetsAdvance(APIView):
 				tweet_index.close_index()
 			if tag_index:
 				tag_index.close_index()
-			response.data['total_results'] = []
+			response.data['results'] = []
 			return response
 
 		docids = list()

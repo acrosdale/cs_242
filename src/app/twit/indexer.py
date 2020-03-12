@@ -236,9 +236,9 @@ class IndexManager(object):
         self.index_commit()
         print(count)
 
-    def index_hashtags(self, queryset_cursor,ngram=0):
+    def index_hashtags(self, queryset_cursor,ngram=0): 
         assert self.indexer is not None
-        # we need to index hastag seperately
+        # we need to "index hastag , create time, location" seperately
         # note on hashtag the name will duplicates
         # so when searching retrieve id as a set()
         # assume queryset_cursor is db variable, run db = GetMongo_client() out side

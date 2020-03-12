@@ -76,7 +76,7 @@ class IndexManager(object):
         for obj,v_obj in tweet.items():
             user_dict=obj.get('user', None)
             if not user_dict:
-                return 0
+                return -(10**10)
             
             #time
             
@@ -87,7 +87,7 @@ class IndexManager(object):
                 score_time=0
             else:
                time=time.split()[1:]
-               state_counts=user_dict.get("statuses_count",2)
+               state_counts=user_dict.get("statuses_count",0)
 
                currentDT = datetime.datetime.now()
                currentDT=str(currentDT).split()

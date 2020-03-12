@@ -25,6 +25,9 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+<!-- city state dropdown-->
+  <script src="//geodata.solutions/includes/statecity.js"></script>
+
 </head>
 
 <header>
@@ -54,7 +57,7 @@
 </header>
 <body>
 
-<div id="mapid" style="width: 80%; height: calc(100vh - 250px); top: 50px"></div>
+<div id="mapid" style="width: 80%; height: calc(100vh - 250px); top: 50px; min-height: 200px"></div>
 <!-- Trigger/Open The Modal -->
 <button id="myBtn" style="visibility : hidden">Open Modal</button>
 
@@ -62,31 +65,46 @@
 <div id="myModal" class="modal">
 
   <!-- Modal content -->
-  <div class="modal-content" id="bootstrap-container" style="height: 40%" >
+  <div class="modal-content" id="bootstrap-container" style="height: 45%px; width:45%;overflow:auto;">
     <span class="close">&times;</span>
     <br>
     <h1 align="center">Advance search</h1>
     <!-- Modal form content-->
     <form autocomplete="on" id="search-adv" class="form search-bar-adv" method="POST">
-      <label class="adv-contains">contains</label>
+
+      <label class="adv-contains">All these words</label>
+      <input id="search-input-adv-and" minlength="3" class="form-control"  placeholder="word1,word2..." role="search" type="search">
+
       <br>
-      <input id="search-input-adv" minlength="3" class="form-control" name="query" placeholder="bit Ops" role="search" type="search">
+      <label class="adv-contains">Any of these words</label>
+      <input id="search-input-adv-or" minlength="3" class="form-control"  placeholder="word1,word2..." role="search" type="search">
+
+      <br>
+      <label class="adv-contains">None of these words</label>
+      <input id="search-input-adv-not" minlength="3" class="form-control"  placeholder="word1,word2..." role="search" type="search">
 
       <br>
       <label class="adv-contains">Hashtags</label>
+
       <br>
-      <input type="text" class="form-control coord-long-adv" value="" placeholder="tag1, tag2, ..."/>
+      <input type="text" class="form-control coord-tag-adv" value="" placeholder="tag1, tag2, ..."/>
 
       <br>
       <label class="adv-contains">date range</label>
       <br>
-      <input type="text" name="daterange"  class="form-control date-inp-range-adv" style="width: 21%" value="" />
+      <input type="text" name="daterange"  class="form-control date-inp-range-adv" style="width: 39%" value="" />
 
       <br>
-      <label class="adv-contains">Coordinates</label>
+      <label class="adv-contains">location</label>
       <br>
-      <input type="text" class="form-control coord-long-adv" style="width: 21%"  value="" placeholder="longitude"/>
-      <input type="text" class="form-control coord-lat-adv"  style="width: 21%" value="" placeholder="latitude"/>
+
+      <input type="hidden" name="country" id="countryId"  value="US"/>
+      <select name="state" class="states order-alpha form-control" id="stateId">
+      <option value="">Select State</option>
+      </select>
+      <select name="city" class="cities order-alpha form-control" id="cityId">
+      <option value="">Select City</option>
+      </select>
 
       <br>
       <div class="modal-footer">

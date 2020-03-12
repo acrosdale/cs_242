@@ -51,7 +51,8 @@ class IndexManager(object):
             self.indexer.set('docid', stored=True)
             self.indexer.set('rank', dimensions=1, stored=True)
             self.indexer.set('hashtag', engine.Field.Text)
-            self.indexer.fields['loctn'] = engine.NestedField('state.city')
+            self.indexer.set('city', engine.Field.Text)
+            self.indexer.set('state', engine.Field.Text)
             self.indexer.set('date', engine.DateTimeField)
         else:
             # create index
@@ -65,7 +66,8 @@ class IndexManager(object):
             # this long and lat tuple
             self.indexer.set('coord', engine.SpatialField)
             self.indexer.set('screen_name', engine.Field.Text)
-            self.indexer.fields['loctn'] = engine.NestedField('state.city')
+            self.indexer.set('city', engine.Field.Text)
+            self.indexer.set('state', engine.Field.Text)
             self.indexer.set('date', engine.DateTimeField)
 
     def get_rank(self, tweet):
@@ -165,7 +167,7 @@ class IndexManager(object):
             date_created = datetime.date(date_created.year, date_created.month, date_created.day)
 
             # removes emoji
-            tweet = settings.EMOJI_PATTERN.sub('', tweet)
+            #tweet = settings.EMOJI_PATTERN.sub('', tweet)
 
             user_dict = obj.get('user', None)
             coord_obj = obj.get('coordinates', None)
@@ -187,10 +189,9 @@ class IndexManager(object):
             if coord_obj:
                 coord = coord_obj.get('coordinates', None)
                 if coord:
-                    print(coord[0], coord[1])
+                    # print(coord[0], coord[1])
                     coord = [(float(coord[0]), float(coord[1]))]
-                    count +=1
-
+                    count += 1
             else:
                 coord = []
 
@@ -200,9 +201,12 @@ class IndexManager(object):
                 if loctn and len(loctn.split(',')) == 2:
                     city, state = loctn.split(',')
                     state = state.strip()
-                    loctn = state + '.' + city
+                else:
+                    city = ''
+                    state = ''
             else:
-                loctn = ''
+                city = ''
+                state = ''
             try:
 
                 self.indexer.add(
@@ -211,9 +215,10 @@ class IndexManager(object):
                     descrpt=descrpt,
                     coord=coord,
                     screen_name=screen_name,
-                    loctn=loctn,
+                    city=city,
+                    state=state,
                     date=date_created,
-                    rank=self.get_rank(obj)
+                    #rank=self.get_rank(obj)
                 )
             except Exception as e:
                 print('error', str(e))
@@ -255,9 +260,12 @@ class IndexManager(object):
                 if loctn and len(loctn.split(',')) == 2:
                     city, state = loctn.split(',')
                     state = state.strip()
-                    loctn = state + '.' + city
+                else:
+                    city = ''
+                    state = ''
             else:
-                loctn = ''
+                city = ''
+                state = ''
 
             hashtags = hashtags_obj.get('hashtags')
 
@@ -274,9 +282,10 @@ class IndexManager(object):
                                 self.indexer.add(
                                     docid=docid,
                                     hashtag=item['text'],
-                                    rank=self.get_rank(obj),
+                                    #rank=self.get_rank(obj),
                                     date=date_created,
-                                    loctn=loctn
+                                    city=city,
+                                    state=state
                                 )
                         except Exception as e:
                             print(str(e))
@@ -295,59 +304,3 @@ class IndexManager(object):
             final+=word_list[i:i+ngram]
 
         return final
-
-
-class QueryParser(object):
-    def __init__(self):
-        pass
-
-    def is_date(self, query):
-        assert isinstance(query, str), 'the query is not a string'
-        pass
-
-    def is_hastag(self, query):
-        assert isinstance(query, str), 'the query is not a string'
-        pass
-
-    def is_tweet_term(self, query):
-        assert isinstance(query, str), 'the query is not a string'
-        pass
-
-    def parse_query(self, query):
-        assert isinstance(query, str), 'the query is not a string'
-        pass
-
-
-class IndexSearcher(object):
-    def __init__(self, index_name=None):
-        assert index_name in ['tweet_index', 'tag_index']
-
-        if index_name:
-            path = os.path.join(settings.STORAGE_DIR, index_name)
-            backup_index = os.path.join(settings.BACKUP_DIR, index_name)
-
-            if os.path.exists(path):
-                self.indexer = IndexManager()
-                self.indexer.open_index(index_name)
-
-            elif os.path.exists(backup_index):
-                self.indexer = IndexManager()
-                self.indexer.open_index(index_name)
-
-            else:
-                raise AssertionError('index does not exist')
-        else:
-            self.indexer = None
-
-        self.query_parser = QueryParser()
-
-    def search_index(self, query):
-        assert isinstance(query, str), 'the query is not a string'
-
-        # is it a hashtag
-        # is it a date
-        # is a word or words
-        pass
-
-
-

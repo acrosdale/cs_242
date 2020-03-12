@@ -56,7 +56,7 @@ class TwitStreamListener(tweepy.StreamListener):
                 # process data here
                 all_data = json.loads(data)
                 if 'created_at' in all_data and all_data['lang'] == 'en':
-                    if all_data['coordinates'] is not None or len(all_data['entities']['hashtags']) > 0:
+                    if all_data['coordinates'] is not None:
                         all_data['created_at'] = parser.parse(all_data['created_at'])
                         self.db.twit_tweet.insert_one(all_data)
                         size = self.db.command('collstats', 'twit_tweet')['size']
@@ -88,15 +88,17 @@ class TwitStreamer(object):
         """
         # assert isinstance(total_tweets_size, int)
         assert isinstance(creds, dict)
+        self.total_tweets_size = total_tweets_size
 
-        auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
-        auth.set_access_token(creds['ACCESS_TOKEN'], creds['ACCESS_SECRET'])
-        self.Stream = tweepy.Stream(auth, listener=TwitStreamListener(total_tweets_size))
+        self.auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+        self.auth.set_access_token(creds['ACCESS_TOKEN'], creds['ACCESS_SECRET'])
 
     def start(self):
         """
         Start stream capture and store tweets to MongoDB
+
         """
+        self.Stream = tweepy.Stream(self.auth, listener=TwitStreamListener(self.total_tweets_size))
         # streamer docs
         # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
         self.Stream.sample()
@@ -106,5 +108,18 @@ class TwitStreamer(object):
         Start stream capture and store tweets to MongoDB
         """
         # streamer docs
+        self.Stream = tweepy.Stream(self.auth, listener=TwitStreamListener(self.total_tweets_size))
         # https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
         self.Stream.filter(languages=['en'], track=track_list)
+
+
+def merge_result(id_rank, itermediate):
+    if len(id_rank):
+        final_results = dict()
+        for k, v in itermediate.items():
+            if id_rank.get(k, None):
+                final_results[k] = v
+        id_rank = final_results
+    else:
+        id_rank = itermediate
+    return id_rank

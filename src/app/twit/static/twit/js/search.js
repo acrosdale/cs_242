@@ -12,20 +12,19 @@ $(document).ready(function(){
 
         /*this is to pop advance search modal*/
          e.preventDefault();
-         engine = 'Lucene';
          console.log('an advance search was made')
+         console.log($('.cities').val());
+         console.log($('.states').val());
 
-         modal.style.display = "none";
-      $('#mapid').css( "display","block" );
-
+        /*call advance search Api*/
+        searchLuceneAdvance();
     });
 
 
     $('.adv-search').click(function(e){
 
         /*this is to pop advance search modal*/
-         e.preventDefault();
-
+        e.preventDefault();
         console.log('this is advance search. pop modal');
          $('#mapid').css( "display","none" );
          $('.date-inp-range-adv').daterangepicker();
@@ -35,7 +34,6 @@ $(document).ready(function(){
 
     $('.switch-input').click(function(){
         engine = $(this).val();
-
         console.log('SEARCH ',engine);
     });
 
@@ -71,8 +69,40 @@ $(document).ready(function(){
             success: function(data){
                console.log(data['results']);
                //call map here to generate tweet with cooardinates
+               //IAN CALL YOUR MAPPER FUNCTION HERE
+               //PASS data['results'] ot it. its an array of dict
+
             }
         });
+    }
+
+    function searchLuceneAdvance(){
+                /*call advance search Api*/
+        $.ajax({
+            url: "/api/advance/lucene/",
+            type:'GET',
+            data:{
+                'and': $('#search-input-adv-and').val(),
+                'or': $('#search-input-adv-or').val(),
+                'not': $('#search-input-adv-not').val(),
+                'date_range': $('.date-inp-range-adv').val(),
+                'city': $('.cities').val(),
+                'state': $('.states').val(),
+                'hashtags': $('.coord-tag-adv').val()
+            },
+            success: function(data){
+               console.log(data);
+               //call map here to generate tweet with cooardinates
+               //IAN CALL YOUR MAPPER FUNCTION HERE
+               //PASS data['results'] to it. its an array of dict
+            }
+        });
+
+         modal.style.display = "none";
+        $('#mapid').css( "display","block" );
+
+        /*clear modal*/
+        $('#search-adv').trigger('reset');
     }
 
 

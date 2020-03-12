@@ -1,6 +1,6 @@
 run/
-resource/logs/
-resource/storage/
+resources/logs/
+resources/storage/
 src/app/twit/migrations/
 .idea/
 *.pyc

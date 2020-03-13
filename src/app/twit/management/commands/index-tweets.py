@@ -4,6 +4,7 @@ from app.twit.indexer import IndexManager
 from app.twit.utils import GetMongo_client
 from pymongo.cursor import Cursor
 import multiprocessing
+import datetime
 
 
 class Command(BaseCommand):
@@ -33,7 +34,8 @@ class Worker(object):
         self.index_name = index_name
 
     def start(self):
-        print('WORKER FOR %s STARTED' % self.index_name)
+        start = datetime.datetime.utcnow()
+        print('WORKER FOR %s STARTED @ %s' % (self.index_name, start))
         try:
             # start lucene
             lucene.initVM()
@@ -59,4 +61,6 @@ class Worker(object):
                 worker.index_tweets(mongo_db_cursor)
 
             worker.close_index()
-            print('WORKER FOR %s finished' % self.index_name)
+            finish = datetime.datetime.utcnow()
+            total = finish-start
+            print('WORKER FOR %s finished in %s seconds' % (self.index_name, total.seconds))

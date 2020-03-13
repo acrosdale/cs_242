@@ -244,7 +244,7 @@ class SearchLuceneTweetsAdvance(APIView):
 		docids = list()
 		# build return data
 		# todo get top k match and sort by rank for lookup
-		hits_list = sorted(id_rank.items(), key=lambda x: x[1],reverse=True)
+		hits_list = sorted(id_rank.items(), key=lambda x: x[1], reverse=True)
 		for hit_tuple in hits_list:
 			docids.append(ObjectId(hit_tuple[0]))
 
@@ -261,7 +261,7 @@ class SearchLuceneTweetsAdvance(APIView):
 			data['rank'] = id_rank[str(data['_id'])]
 			del data['_id']
 
-		#query_data[15]['rank'] = 12.0
+		# query_data[15]['rank'] = 12.0
 
 		# SORTED BY RANK IE RELEVANCE
 		query_data = sorted(query_data, key=lambda i: i['rank'], reverse=True)
@@ -275,38 +275,10 @@ class SearchLuceneTweetsAdvance(APIView):
 
 		return response
 
+
 class SearchHadoopIndex(APIView):
 	help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
 
 	def get(self, request):
 		param = 'johncena'
 		response = Response(data={})
-
-
-
-# >>> ind.indexer.search(q).count
-# 1008
-# >>> q =engine.Query.ranges('date',[1.4778368E9 ,1.5005151999999998E9])
-# >>> ind.indexer.search(q).count
-# 0
-# >>>
-# >>>
-# >>>
-# >>> d2 = datetime.date(2020, 2, 1)
-# >>> d = datetime.date(2020, 1, 1)
-# >>> q=engine.DateTimeField('date').range(d,d2)
-# >>> ind.indexer.search(q).count
-# 0
-# >>> ind.close_index()
-# True
-# >>> ind.open_index('tweet_index')
-# >>> ind.indexer.search(q).count
-# 1
-# >>> hits =ind.indexer.search(q)
-# >>> hits
-# <lupyne.engine.documents.Hits object at 0x7f6b0d7e39d0>
-# >>> hits.dict()
-# Traceback (most recent call last):
-#   File "<console>", line 1, in <module>
-# AttributeError: 'Hits' object has no attribute 'dict'
-# >>> hits[0].dict()

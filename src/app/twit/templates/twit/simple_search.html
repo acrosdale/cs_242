@@ -50,7 +50,9 @@
       <input type="radio" class="switch-input" name="view2" value="hadoop" id="hadoop">
       <label for="hadoop" class="switch-label switch-label-on">hadoop</label>
       <span class="switch-selection"></span>
+      <input type="checkbox" class="map-or-display" checked><label>MAP</label>
     </div>
+
 
 
 
@@ -58,12 +60,14 @@
 <body>
 
 <div id="mapid" style="width: 80%; height: calc(100vh - 250px); top: 50px; min-height: 200px"></div>
+
+<div id="display-d" style="color: #FFFFFF"></div>
+
 <!-- Trigger/Open The Modal -->
 <button id="myBtn" style="visibility : hidden">Open Modal</button>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
-
   <!-- Modal content -->
   <div class="modal-content" id="bootstrap-container" style="height: 45%px; width:45%;overflow:auto;">
     <span class="close">&times;</span>
@@ -113,8 +117,10 @@
 
     </form>
   </div>
-
 </div>
+
+
+
 </body>
 
 <!--map js files-->

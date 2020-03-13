@@ -8,6 +8,8 @@ $(document).ready(function(){
     // The api back to use
     var engine = 'Lucene';
 
+    var do_display = false;
+
     $('.adv-modal-submit').click(function(e){
 
         /*this is to pop advance search modal*/
@@ -49,18 +51,36 @@ $(document).ready(function(){
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
-      $('#mapid').css( "display","block" );
+      if(!do_display){
+              $('#mapid').css( "display","block");
+        }
     }
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.style.display = "none";
-        $('#mapid').css( "display","block");
+        if(!do_display){
+              $('#mapid').css( "display","block");
+        }
+
+
+
       }
     }
 
+    function displayData(data){
+        $("#display-d").empty();
+        var result = '';
+        console.log('DOINg display');
+        for(i in data){
+            result+="User: "+ data[i].user.screen_name + "; Relevance : "+ data[i].rank+" <br> &emsp; Tweeted: "+data[i].text+"<br><hr><br>";
+        }
+        $("#display-d").html(result);
+    }
+
     function searchLuceneBasic(query_str){
+
         var url = "/api/lucene/?query="+ query_str
 
         $.ajax({
@@ -68,12 +88,24 @@ $(document).ready(function(){
             type:'GET',
             success: function(data){
                console.log(data['results']);
-               //call map here to generate tweet with cooardinates
-               //IAN CALL YOUR MAPPER FUNCTION HERE
-               //PASS data['results'] ot it. its an array of dict
+               modal.style.display = "none";
+
+               if(do_display){
+                    displayData(data['results']);
+               }
+               else{
+                   //call map here to generate tweet with cooardinates
+                   //IAN CALL YOUR MAPPER FUNCTION HERE
+                   //PASS data['results'] ot it. its an array of dict
+
+                    $('#mapid').css( "display","block" );
+               }
 
             }
         });
+
+        /*clear modal*/
+        $('#search-adv').trigger('reset');
     }
 
     function searchLuceneAdvance(){
@@ -91,19 +123,35 @@ $(document).ready(function(){
                 'hashtags': $('.coord-tag-adv').val()
             },
             success: function(data){
-               console.log(data);
-               //call map here to generate tweet with cooardinates
-               //IAN CALL YOUR MAPPER FUNCTION HERE
-               //PASS data['results'] to it. its an array of dict
+            modal.style.display = "none";
+             if(do_display){
+                    displayData(data['results']);
+             }
+             else{
+                   console.log(data);
+                   //call map here to generate tweet with cooardinates
+                   //IAN CALL YOUR MAPPER FUNCTION HERE
+                   //PASS data['results'] to it. its an array of dict
+
+                $('#mapid').css( "display","block" );
+             }
             }
         });
 
-         modal.style.display = "none";
-        $('#mapid').css( "display","block" );
-
         /*clear modal*/
         $('#search-adv').trigger('reset');
+
     }
 
+    $('.map-or-display').click(function(){
+            if($(this).prop("checked") == false){
+                $('#mapid').css( "display","none" );
+                do_display = true;
+            }
+            else if($(this).prop("checked") == true){
+                $('#mapid').css( "display","block" );
+                do_display = false;
+            }
+    });
 
 });

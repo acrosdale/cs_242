@@ -148,6 +148,9 @@ class SearchLuceneTweetsAdvance(APIView):
 
 			if date_range:
 				date_range = date_range.split('-')
+				date_range[0] = date_range[0].strip()
+				date_range[1] = date_range[1].strip()
+
 				date_1 = date_range[0].split('/')
 				date_2 = date_range[1].split('/')
 				d2 = datetime.date(int(date_2[2]), int(date_2[0]), int(date_2[1]))

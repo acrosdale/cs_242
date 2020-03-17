@@ -16,6 +16,7 @@ RUN apt-get install python3-pip -y
 RUN pip3 install pymongo
 RUN pip3 install mrjob
 RUN pip3 install simplejson
+RUN pip3 install numpy
 
 
 EXPOSE 9870

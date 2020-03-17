@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import csv
 
+
 def getDataFromDB():
     client = MongoClient(
         'mongodb://root:pleaseUseAStr0ngPassword@mongod:27017/admin')
@@ -15,6 +16,10 @@ def getDataFromDB():
         for document in cursor:
             del document["_id"]
             del document["created_at"]
-            writer.writerow({"id": document["id"], "text":document["text"].encode('ascii', 'ignore')})
+            writer.writerow({
+                "id": document["id"],
+                "text": document["text"].encode('ascii', 'ignore')
+            })
+
 
 getDataFromDB()

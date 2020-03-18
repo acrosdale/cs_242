@@ -130,4 +130,7 @@ class BuildInvertedIndex(MRJob):
 
 
 if __name__ == '__main__':
+    time = datetime.datetime.now()
     BuildInvertedIndex.run()
+    print("time to rank and index by hadoop MR job: ",
+          datetime.datetime.now() - time)

@@ -42,10 +42,8 @@ $(document).ready(function(){
     $('.search-bar').on('submit',function(e){
         e.preventDefault();
         console.log('form stopped');
-        if(engine == 'Lucene'){
-            console.log($('#search-input').val())
-            searchLuceneBasic($('#search-input').val(), engine)
-        } 
+	console.log($('#search-input').val())
+	searchLuceneBasic($('#search-input').val(), engine)
     });
 
     // When the user clicks on <span> (x), close the modal
@@ -81,7 +79,7 @@ $(document).ready(function(){
 
     function searchLuceneBasic(query_str, engine){
 
-        var url = "/api/" + engine +"/?query="+ query_str
+        var url = "/api/" + engine.toLowerCase() +"/?query="+ query_str
 
         $.ajax({
             url: url,
@@ -97,8 +95,8 @@ $(document).ready(function(){
                    //call map here to generate tweet with cooardinates
                    //IAN CALL YOUR MAPPER FUNCTION HERE
                    //PASS data['results'] ot it. its an array of dict
-
-                    $('#mapid').css( "display","block" );
+		   showResultOnMap(data['results']);
+                   $('#mapid').css( "display","block" );
                }
 
             }
@@ -131,6 +129,7 @@ $(document).ready(function(){
                    console.log(data);
                    //call map here to generate tweet with cooardinates
                    //IAN CALL YOUR MAPPER FUNCTION HERE
+		   showResultOnMap(data['results']);
                    //PASS data['results'] to it. its an array of dict
 
                 $('#mapid').css( "display","block" );

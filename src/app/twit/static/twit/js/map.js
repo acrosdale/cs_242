@@ -9,13 +9,23 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 	tileSize: 512,
 	zoomOffset: -1
 }).addTo(mymap);
+var layerGroup = L.layerGroup().addTo(mymap);
 
 function showResultOnMap(result) {
-	if (result.length > 0) {
-		$.parseJSON(result).forEach(point => {
-			if (point.coordinates != null) {
-				L.marker(point.coordinates, {icon: twitterIcon}).addTo(mymap)
-					.bindPopup(point.Text);
+	layerGroup.clearLayers();
+	if (!$.isEmptyObject(result)) {
+		let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+		$.each(result, (idx, point) => {
+			console.log(point);
+			if (point.geo != null) {
+				console.log(point.geo.coordinates);
+				L.marker(point.geo.coordinates, {icon: twitterIcon}).addTo(layerGroup)
+					.bindPopup(point.text);
+				minLng = Math.min(minLng, point.geo.coordinates[0]);
+				maxLng = Math.max(maxLng, point.geo.coordinates[0]);
+				minLat = Math.min(minLat, point.geo.coordinates[1]);
+				maxLat = Math.max(maxLat, point.geo.coordinates[1]);
+				mymap.setView([(minLng+maxLng)/2, (minLat+maxLat)/2], 5);
 			}
 		});
 	}

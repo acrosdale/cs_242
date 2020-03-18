@@ -43,7 +43,7 @@ $(document).ready(function(){
         e.preventDefault();
         console.log('form stopped');
 	console.log($('#search-input').val())
-	searchLuceneBasic($('#search-input').val(), engine)
+	searchBasic($('#search-input').val(), engine)
     });
 
     // When the user clicks on <span> (x), close the modal
@@ -77,7 +77,7 @@ $(document).ready(function(){
         $("#display-d").html(result);
     }
 
-    function searchLuceneBasic(query_str, engine){
+    function searchBasic(query_str, engine){
 
         var url = "/api/" + engine.toLowerCase() +"/?query="+ query_str
 

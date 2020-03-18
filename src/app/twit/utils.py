@@ -24,7 +24,6 @@ def loadJsonInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standar
                 db.twit_tweet.insert_one(data)
             except Exception as e:
                 print(e)
-                break
 
     # df = pd.read_json(filePath, orient='columns')
     # records_ = df

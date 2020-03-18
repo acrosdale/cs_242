@@ -9,6 +9,7 @@ import os
 import shutil
 import datetime
 import numpy as np
+from bson.objectid import ObjectId
 
 client = MongoClient(
     'mongodb://root:pleaseUseAStr0ngPassword@mongod:27017/admin')
@@ -17,11 +18,11 @@ db = client['%s' % collection_name]
 collection = db['ranked_index']
 
 
-def get_rank(self, tweetId):
+def get_rank(self, _id):
     # assert isinstance(tweet, dict)
 
     twitCollection = db['twit_tweet']
-    tweet = twitCollection.find_one({'id': int(tweetId)})
+    tweet = twitCollection.find_one({'_id': ObjectId(_id)})
     user_dict = tweet.get('user', None)
     #print(user_dict)
     if not user_dict:
@@ -118,7 +119,7 @@ class BuildInvertedIndex(MRJob):
         # Add ranking function here :
         # rank = random.randint(1, 2000)
         rank = get_rank(self, tweetid)
-        tweetObj = {"tweetId": tweetid, "tweetText": tweettext, "rank": rank}
+        tweetObj = {"_id": tweetid, "rank": rank}
 
         for word in str(tweettext).split(" "):
             yield (word, tweetObj)

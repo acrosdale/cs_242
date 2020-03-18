@@ -10,15 +10,13 @@ def getDataFromDB():
     collection = db['twit_tweet']
     cursor = collection.find({})
     with open('collection.csv', 'w', newline='') as file:
-        fieldnames = ['id', 'text']
+        fieldnames = ['_id', 'text']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
-        # writer.writeheader()
         for document in cursor:
-            del document["_id"]
-            del document["created_at"]
             writer.writerow({
-                "id": document["id"],
-                "text": document["text"].encode('ascii', 'ignore')
+                "_id": str(document["_id"]),
+                "text": document["text"].encode('ascii', 'ignore'),
+                # "location": location
             })
 
 

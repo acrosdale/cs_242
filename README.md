@@ -3,14 +3,16 @@
 ## Project Structure
 
 ## How to get db
-`from twit.utils import GetMongo_client`.     
+
+`from twit.utils import GetMongo_client`.  
 `cs_242/src/app/twit/utils.py` , the class of GetMongo_client, get the mogodb variable
 
 ## Usage
 
-
 ### Capture the stream
+
 1. After compose,enter the `django_twitter` container
+
 ```bash
 sudo docker exec -it django_twitter bash
 ```
@@ -19,6 +21,7 @@ if not work tired:
 `docker-compose build --no-cache`
 
 2. Run management cmds
+
 ```bash
 cd src/app
 
@@ -31,13 +34,22 @@ python manage.py load-csv -fp 'twit_tweet-standard.json' # loads the json file n
 python manage.py index-tweets # creates two indexes ['tweet_index', 'tag_index']
 
 ```
-3. Download the data from MongoDB Express
-	* Go to [https://localhost:8081](https://localhost:8081), click on **django**
-	* Export data from `twit_tweet`
+
+3.  After that, to see Hadoop Inverted index and run Map-Reduce jobs enter the `namenode` container
+
+```bash
+sudo docker exec -it namenode bash
+cd home/hadoopMR
+
+sh exec.sh  # exports the data from 'twit_tweet' collection in csv and runs the Hadoop Map-Reduce jobs with the data, which internally calls the ranking function and stores the final indexed-ranked documents in the DB.
+
+```
+
+4. Download the data from MongoDB Express
+   - Go to [https://localhost:8081](https://localhost:8081), click on **django**
+   - Export data from `twit_tweet`
 
 ## Changelog
-* first commit
-	* skeleton code for cs 242 project. made with django, mongodb, docker
-* Jan 31
-	* Complete Twitter crawling
 
+- first commit \* skeleton code for cs 242 project. made with django, mongodb, docker
+- Jan 31 \* Complete Twitter crawling

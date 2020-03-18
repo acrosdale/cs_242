@@ -44,8 +44,8 @@ $(document).ready(function(){
         console.log('form stopped');
         if(engine == 'Lucene'){
             console.log($('#search-input').val())
-            searchLuceneBasic($('#search-input').val())
-        }
+            searchLuceneBasic($('#search-input').val(), engine)
+        } 
     });
 
     // When the user clicks on <span> (x), close the modal
@@ -79,9 +79,9 @@ $(document).ready(function(){
         $("#display-d").html(result);
     }
 
-    function searchLuceneBasic(query_str){
+    function searchLuceneBasic(query_str, engine){
 
-        var url = "/api/lucene/?query="+ query_str
+        var url = "/api/" + engine +"/?query="+ query_str
 
         $.ajax({
             url: url,

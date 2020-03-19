@@ -34,6 +34,22 @@ def loadJsonInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'twit_tweet-standar
     print('total_record added', db.twit_tweet.count())
 
 
+def loadHadoopInMongo(filepath='%s/%s' %(settings.STORAGE_DIR, 'out1.csv')):
+    db = GetMongo_client()
+    # not to self use standard export feature from mongo
+    # it export lines of json data
+    with open(filepath) as f:
+        for line in f:
+            try:
+                data = loads(line)
+                db.ranked_index.insert_one(data)
+            except Exception as e:
+                print(e)
+                break
+
+    print('total_index added', db.ranked_index.count())
+
+
 class TwitStreamListener(tweepy.StreamListener):
     def __init__(self, tweet_limit):
         self.db = GetMongo_client()

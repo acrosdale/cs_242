@@ -20,9 +20,9 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-
     path('test/', views.TestApi.as_view()),
     path('lucene/', views.SearchLuceneTweets.as_view()),
     path('advance/lucene/', views.SearchLuceneTweetsAdvance.as_view()),
+    path('hadoop/', views.SearchHadoopIndex.as_view()),
 ]
 

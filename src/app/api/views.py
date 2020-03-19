@@ -2,6 +2,9 @@ import os
 import json
 import datetime
 from lupyne import engine
+import logging
+import urllib
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
@@ -11,6 +14,7 @@ from app.twit.utils import GetMongo_client
 from bson.objectid import ObjectId
 from app.twit.utils import merge_result
 
+logger = logging.getLogger(__name__)
 
 class TestApi(APIView):
 	help = 'this api will enable user to search the tweet param of the tweet index'
@@ -94,7 +98,7 @@ class SearchLuceneTweets(APIView):
 					db = GetMongo_client()
 					query_data = db.twit_tweet.find(
 						{'_id': {'$in': docids}},
-						{'_id': True, 'user.screen_name': True, 'text': True, 'coordinates': True}
+						{'_id': True, 'user.screen_name': True, 'text': True, 'geo.coordinates': True}
 					)
 
 					# sort relevance
@@ -255,7 +259,7 @@ class SearchLuceneTweetsAdvance(APIView):
 		db = GetMongo_client()
 		query_data = db.twit_tweet.find(
 			{'_id': {'$in': docids}},
-			{'_id': True, 'user.screen_name': True, 'text': True, 'coordinates': True}
+			{'_id': True, 'user.screen_name': True, 'text': True, 'geo.coordinates': True}
 		)
 
 		# sort relevance
@@ -280,8 +284,75 @@ class SearchLuceneTweetsAdvance(APIView):
 
 
 class SearchHadoopIndex(APIView):
-	help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
+        help = 'this api will enable user to search the tweet param of the  hadoop inverted index'
 
-	def get(self, request):
-		param = 'johncena'
-		response = Response(data={})
+        def get(self, request):
+                query = request.GET.get('query', None)
+                response = Response(data={})
+                if query is None:
+                    return response
+
+                db = GetMongo_client()
+
+                doc_list = dict()
+                for word in query.split():
+                    query_data = db.ranked_index.find_one({'word': word}, {'_id': False, 'word': True, 'tweets': True})
+                    if query_data:
+                        query_data = dict(query_data)
+                        if len(doc_list) > 0:
+                            tmp_list = dict()
+                            for x in query_data.get('tweets', ''):
+                                if x.get(ObjectId('_id')) in doc_list:
+                                    tmp_list[ObjectId(x['_id'])] = doc_list[ObjectId(x['_id'])]+x.get('rank')
+
+                            doc_list = tmp_list
+                                
+                        else:
+                            for x in query_data.get('tweets', ''):
+                                doc_list[ObjectId(x['_id'])] = x['rank']
+                    else:
+                        response.data['results'] = []
+                        return response
+
+                query_data = db.twit_tweet.find(
+                    {'_id': {'$in': list(doc_list.keys())}},
+                    {'_id': True, 'user.screen_name': True, 'text': True, 'geo.coordinates': True}
+                )
+                # sort relevance
+                query_data = list(query_data)
+                for data in query_data:
+                    data['rank'] = doc_list[data['_id']]
+                    del data['_id']
+
+                query_data = sorted(query_data, key=lambda v: v['rank'], reverse=True)
+                logger.warning('query_data=%s', query_data)
+                response.data['results'] = query_data
+                response.data['total_results'] = len(query_data)
+                return response
+
+# >>> ind.indexer.search(q).count
+# 1008
+# >>> q =engine.Query.ranges('date',[1.4778368E9 ,1.5005151999999998E9])
+# >>> ind.indexer.search(q).count
+# 0
+# >>>
+# >>>
+# >>>
+# >>> d2 = datetime.date(2020, 2, 1)
+# >>> d = datetime.date(2020, 1, 1)
+# >>> q=engine.DateTimeField('date').range(d,d2)
+# >>> ind.indexer.search(q).count
+# 0
+# >>> ind.close_index()
+# True
+# >>> ind.open_index('tweet_index')
+# >>> ind.indexer.search(q).count
+# 1
+# >>> hits =ind.indexer.search(q)
+# >>> hits
+# <lupyne.engine.documents.Hits object at 0x7f6b0d7e39d0>
+# >>> hits.dict()
+# Traceback (most recent call last):
+#   File "<console>", line 1, in <module>
+# AttributeError: 'Hits' object has no attribute 'dict'
+# >>> hits[0].dict()

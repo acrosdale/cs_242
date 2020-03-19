@@ -11,7 +11,7 @@
 
 1. Within the root level of the project dir [/cs_242/] run ```docker-compose up```. This will start all the required containers.
 
-2. Before using the search engine load data into the db, create in the lucene and hadoop index. the step to do so are below.
+2. Before using the search engine you should load data into the db, create the lucene and hadoop index. The steps to do so are below.
 
 3. After everthing is up and running click the link to go to the apps main page [http://localhost:1337/twit/](http://localhost:1337/twit/). 
 

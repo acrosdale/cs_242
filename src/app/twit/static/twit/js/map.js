@@ -25,7 +25,8 @@ function showResultOnMap(result) {
 				maxLng = Math.max(maxLng, point.geo.coordinates[0]);
 				minLat = Math.min(minLat, point.geo.coordinates[1]);
 				maxLat = Math.max(maxLat, point.geo.coordinates[1]);
-				mymap.setView([(minLng+maxLng)/2, (minLat+maxLat)/2], 5);
+				//mymap.setView([(minLng+maxLng)/2, (minLat+maxLat)/2], 5);
+				mymap.setZoom(1);
 			}
 		});
 	}

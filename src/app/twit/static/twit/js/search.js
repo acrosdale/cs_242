@@ -7,6 +7,7 @@ $(document).ready(function(){
 
     // The api back to use
     var engine = 'Lucene';
+    $("#display-d").hide();
 
     var do_display = false;
 
@@ -90,13 +91,15 @@ $(document).ready(function(){
 
                if(do_display){
                     displayData(data['results']);
+                    showResultOnMap(data['results']);
                }
                else{
                    //call map here to generate tweet with cooardinates
                    //IAN CALL YOUR MAPPER FUNCTION HERE
                    //PASS data['results'] ot it. its an array of dict
-		   showResultOnMap(data['results']);
+		           showResultOnMap(data['results']);
                    $('#mapid').css( "display","block" );
+                   displayData(data['results']);
                }
 
             }
@@ -124,15 +127,17 @@ $(document).ready(function(){
             modal.style.display = "none";
              if(do_display){
                     displayData(data['results']);
+                    showResultOnMap(data['results']);
              }
              else{
                    console.log(data);
                    //call map here to generate tweet with cooardinates
                    //IAN CALL YOUR MAPPER FUNCTION HERE
-		   showResultOnMap(data['results']);
+		            showResultOnMap(data['results']);
                    //PASS data['results'] to it. its an array of dict
 
-                $('#mapid').css( "display","block" );
+                    $('#mapid').css( "display","block" );
+                     displayData(data['results']);
              }
             }
         });
@@ -146,10 +151,12 @@ $(document).ready(function(){
             if($(this).prop("checked") == false){
                 $('#mapid').css( "display","none" );
                 do_display = true;
+                $("#display-d").show();
             }
             else if($(this).prop("checked") == true){
                 $('#mapid').css( "display","block" );
                 do_display = false;
+                $("#display-d").hide();
             }
     });
 

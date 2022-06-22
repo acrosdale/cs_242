@@ -12,7 +12,7 @@ JCC==3.6
 kombu==4.6.8
 lucene==8.1.1
 lupyne==2.4
-numpy==1.18.1
+numpy==1.22.0
 oauthlib==3.1.0
 pandas==1.0.1
 progressbar2==3.47.0
